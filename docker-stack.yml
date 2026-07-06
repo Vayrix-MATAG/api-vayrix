@@ -1,0 +1,215 @@
+# =============================================================================
+# Docker Swarm — Stack VAYRIX API
+# =============================================================================
+#
+# Prérequis sur le manager Swarm :
+#   docker swarm init                          (si pas encore initialisé)
+#   docker network create --driver overlay vayrix-net   (si réseau externe)
+#
+# Secrets (créer une fois sur le manager) :
+#   echo "votre-jwt-secret"       | docker secret create vayrix_jwt_secret -
+#   echo "votre-refresh-secret"   | docker secret create vayrix_jwt_refresh_secret -
+#   echo "mot-de-passe-db"        | docker secret create vayrix_db_password -
+#   echo "mot-de-passe-smtp"      | docker secret create vayrix_mail_password -
+#   echo "cle-api-sms"            | docker secret create vayrix_sms_api_key -
+#
+# Build & déploiement :
+#   docker build -t vayrix-api:latest .
+#   docker stack deploy -c docker-stack.yml vayrix
+#
+# Commandes utiles :
+#   docker stack services vayrix
+#   docker stack ps vayrix
+#   docker service logs vayrix_api -f
+#   docker stack rm vayrix
+#
+# =============================================================================
+
+version: "3.8"
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # API NestJS
+  # ---------------------------------------------------------------------------
+  api:
+    image: vayrix-api:latest
+    ports:
+      - target: 3000
+        published: 3000
+        protocol: tcp
+        mode: ingress
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      API_PREFIX: api/v1
+      FRONTEND_URL: ${FRONTEND_URL:-https://app.vayrix.com}
+      DATABASE_HOST: postgres
+      DATABASE_NAME: vayrix_api
+      DATABASE_USER: postgres
+      DB_PASSWORD_FILE: /run/secrets/db_password
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      JWT_REFRESH_SECRET_FILE: /run/secrets/jwt_refresh_secret
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-15m}
+      JWT_REFRESH_EXPIRES_IN: ${JWT_REFRESH_EXPIRES_IN:-7d}
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_SECURE: ${MAIL_SECURE:-false}
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD_FILE: /run/secrets/mail_password
+      MAIL_FROM_EMAIL: ${MAIL_FROM_EMAIL}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-VAYRIX}
+      MAIL_LOGO_URL: ${MAIL_LOGO_URL:-}
+      SMS_PROVIDER: ${SMS_PROVIDER:-http}
+      SMS_API_URL: ${SMS_API_URL}
+      SMS_API_KEY_FILE: /run/secrets/sms_api_key
+      SMS_SENDER_ID: ${SMS_SENDER_ID:-VAYRIX}
+      OTP_EXPIRY_MINUTES: ${OTP_EXPIRY_MINUTES:-5}
+      OTP_RESEND_COOLDOWN_SECONDS: ${OTP_RESEND_COOLDOWN_SECONDS:-60}
+      OTP_MAX_ATTEMPTS: ${OTP_MAX_ATTEMPTS:-5}
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      CORS_ORIGINS: ${CORS_ORIGINS:-https://app.vayrix.com}
+      THROTTLE_TTL: ${THROTTLE_TTL:-60000}
+      THROTTLE_LIMIT: ${THROTTLE_LIMIT:-100}
+      STORAGE_PATH: /app/storage
+    secrets:
+      - jwt_secret
+      - jwt_refresh_secret
+      - db_password
+      - mail_password
+      - sms_api_key
+    volumes:
+      - api_storage:/app/storage
+    networks:
+      - vayrix-net
+    deploy:
+      mode: replicated
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 15s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    depends_on:
+      - postgres
+      - redis
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL
+  # ---------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: vayrix_api
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - vayrix-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vayrix_api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---------------------------------------------------------------------------
+  # Redis
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - vayrix-net
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+# =============================================================================
+# Secrets Swarm (créer avant le déploiement — voir instructions en tête de fichier)
+# =============================================================================
+secrets:
+  jwt_secret:
+    external: true
+    name: vayrix_jwt_secret
+  jwt_refresh_secret:
+    external: true
+    name: vayrix_jwt_refresh_secret
+  db_password:
+    external: true
+    name: vayrix_db_password
+  mail_password:
+    external: true
+    name: vayrix_mail_password
+  sms_api_key:
+    external: true
+    name: vayrix_sms_api_key
+
+# =============================================================================
+# Réseau overlay Swarm
+# =============================================================================
+networks:
+  vayrix-net:
+    external: true
+    name: vayrix-net
+
+# =============================================================================
+# Volumes persistants
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  api_storage:
+    driver: local

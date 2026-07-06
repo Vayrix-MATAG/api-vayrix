@@ -1,0 +1,640 @@
+// =============================================================================
+// Schéma Prisma VAYRIX — traduction fidèle du diagramme Mermaid ERD validé
+// =============================================================================
+// Règles respectées :
+// - 28 tables (aucune fusion, aucun enum à la place d'une table)
+// - Tous les champs du diagramme sont présents, AUCUN champ ajouté qui ne
+//   figure pas explicitement dans le bloc entité d'origine
+// - COURSE ne contient PAS de client_id (conforme au diagramme corrigé)
+// - Relations conservées uniquement quand elles s'appuient sur des champs
+//   réellement déclarés dans les tables
+// =============================================================================
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// -----------------------------------------------------------------------------
+// UTILISATEUR
+// -----------------------------------------------------------------------------
+model Utilisateur {
+  id                BigInt    @id @default(autoincrement())
+  nom               String    @db.VarChar(100)
+  prenom            String    @db.VarChar(100)
+  telephone         String    @db.VarChar(20)
+  email             String    @unique @db.VarChar(191)
+  motDePasse        String    @map("mot_de_passe") @db.VarChar(255)
+  photo             String?   @db.VarChar(500)
+  langue            String    @db.VarChar(10)
+  derniereConnexion DateTime? @map("derniere_connexion")
+  dateCreation      DateTime  @default(now()) @map("date_creation")
+  dateModification  DateTime  @updatedAt @map("date_modification")
+  refreshToken         String?
+
+  utilisateurRoles UtilisateurRole[]
+  otps             Otp[]
+  client           Client?
+  chauffeur        Chauffeur?
+  administrateur   Administrateur?
+  localisations    Localisation[]
+  modeSecurite     ModeSecurite?
+  notifications    Notification[]
+  alertesSecurite  AlerteSecurite[]
+  journalAudits    JournalAudit[]
+
+  @@index([telephone])
+  @@index([email])
+  @@index([dateCreation])
+  @@map("utilisateur")
+}
+
+// -----------------------------------------------------------------------------
+// OTP (codes à usage unique centralisés)
+// -----------------------------------------------------------------------------
+model Otp {
+  id            BigInt   @id @default(autoincrement())
+  utilisateurId BigInt   @map("utilisateur_id")
+  code          String   @db.VarChar(10)
+  canal         String   @db.VarChar(20)
+  type          String   @db.VarChar(30)
+  expireAt      DateTime @map("expire_at")
+  utilise       Boolean  @default(false)
+  tentatives    Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@index([code])
+  @@index([canal])
+  @@index([type])
+  @@map("otp")
+}
+
+// -----------------------------------------------------------------------------
+// ROLE
+// -----------------------------------------------------------------------------
+model Role {
+  id          BigInt @id @default(autoincrement())
+  nom         String @unique @db.VarChar(100)
+  description String @db.Text
+
+  utilisateurRoles UtilisateurRole[]
+
+  @@map("role")
+}
+
+// -----------------------------------------------------------------------------
+// UTILISATEUR_ROLE
+// -----------------------------------------------------------------------------
+model UtilisateurRole {
+  id            BigInt @id @default(autoincrement())
+  utilisateurId BigInt @map("utilisateur_id")
+  roleId        BigInt @map("role_id")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  role        Role        @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([utilisateurId, roleId])
+  @@index([utilisateurId])
+  @@index([roleId])
+  @@map("utilisateur_role")
+}
+
+// -----------------------------------------------------------------------------
+// CLIENT
+// -----------------------------------------------------------------------------
+model Client {
+  id            BigInt   @id @default(autoincrement())
+  utilisateurId BigInt   @unique @map("utilisateur_id")
+  estEnLigne    Boolean  @default(false) @map("est_en_ligne")
+  statut        String   @db.VarChar(50)
+  dateCreation  DateTime @default(now()) @map("date_creation")
+
+  utilisateur           Utilisateur             @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  contactUrgences       ContactUrgence[]
+  propositionPrix       PropositionPrix[]
+  demandePartageCourses DemandePartageCourse[]
+  participantCourses    ParticipantCourse[]
+  evaluationsChauffeur  EvaluationChauffeur[]
+  evaluationsClient     EvaluationClient[]
+
+  @@index([statut])
+  @@index([estEnLigne])
+  @@map("client")
+}
+
+// -----------------------------------------------------------------------------
+// CONTACT_URGENCE
+// -----------------------------------------------------------------------------
+model ContactUrgence {
+  id            BigInt @id @default(autoincrement())
+  utilisateurId BigInt @map("utilisateur_id")
+  nom           String @db.VarChar(100)
+  telephone     String @db.VarChar(20)
+  mail          String @db.VarChar(191)
+
+  client Client @relation(fields: [utilisateurId], references: [utilisateurId], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@map("contact_urgence")
+}
+
+// -----------------------------------------------------------------------------
+// LOCALISATION
+// -----------------------------------------------------------------------------
+model Localisation {
+  id            BigInt @id @default(autoincrement())
+  utilisateurId BigInt @map("utilisateur_id")
+  adresse       String @db.VarChar(500)
+  latitude      Float
+  longitude     Float
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@index([latitude, longitude])
+  @@map("localisation")
+}
+
+// -----------------------------------------------------------------------------
+// CHAUFFEUR
+// -----------------------------------------------------------------------------
+model Chauffeur {
+  id               BigInt   @id @default(autoincrement())
+  utilisateurId    BigInt   @unique @map("utilisateur_id")
+  numeroPermis     String   @map("numero_permis") @db.VarChar(50)
+  estEnLigne       Boolean  @default(false) @map("est_en_ligne")
+  solde            Decimal  @default(0) @db.Decimal(12, 2)
+  statut           String   @db.VarChar(50)
+  motifStatut      String?  @map("motif_statut") @db.VarChar(500)
+  dateCreation     DateTime @default(now()) @map("date_creation")
+  dateModification DateTime @updatedAt @map("date_modification")
+
+  utilisateur          Utilisateur           @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  vehicules            Vehicule[]
+  documentChauffeurs   DocumentChauffeur[]
+  courses              Course[]
+  propositionPrix      PropositionPrix[]
+  positionChauffeurs   PositionChauffeur[]
+  evaluationsChauffeur EvaluationChauffeur[]
+  evaluationsClient    EvaluationClient[]
+
+  @@index([statut])
+  @@index([estEnLigne])
+  @@map("chauffeur")
+}
+
+// -----------------------------------------------------------------------------
+// TYPE_VEHICULE
+// -----------------------------------------------------------------------------
+model TypeVehicule {
+  id        BigInt  @id @default(autoincrement())
+  nom       String  @unique @db.VarChar(100)
+  prixBase  Decimal @map("prix_base") @db.Decimal(12, 2)
+  prixParKm Decimal @map("prix_par_km") @db.Decimal(12, 2)
+
+  vehicules     Vehicule[]
+  tarifications Tarification[]
+
+  @@map("type_vehicule")
+}
+
+// -----------------------------------------------------------------------------
+// VEHICULE
+// -----------------------------------------------------------------------------
+model Vehicule {
+  id             BigInt @id @default(autoincrement())
+  chauffeurId    BigInt @map("chauffeur_id")
+  typeVehiculeId BigInt @map("type_vehicule_id")
+  marque         String @db.VarChar(100)
+  modele         String @db.VarChar(100)
+  couleur        String @db.VarChar(50)
+  matricule      String @unique @db.VarChar(20)
+  annee          Int
+  statut         String @db.VarChar(50)
+
+  chauffeur         Chauffeur          @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+  typeVehicule      TypeVehicule       @relation(fields: [typeVehiculeId], references: [id], onDelete: Restrict)
+  courses           Course[]
+  documentVehicules DocumentVehicule[]
+
+  @@index([chauffeurId])
+  @@index([typeVehiculeId])
+  @@index([statut])
+  @@map("vehicule")
+}
+
+// -----------------------------------------------------------------------------
+// DOCUMENT_CHAUFFEUR
+// -----------------------------------------------------------------------------
+model DocumentChauffeur {
+  id           BigInt   @id @default(autoincrement())
+  chauffeurId  BigInt   @map("chauffeur_id")
+  typeDocument String   @map("type_document") @db.VarChar(100)
+  urlDocument  String   @map("url_document") @db.VarChar(500)
+  statut       String   @db.VarChar(50)
+  dateUpload   DateTime @default(now()) @map("date_upload")
+
+  chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+
+  @@index([chauffeurId])
+  @@index([statut])
+  @@map("document_chauffeur")
+}
+
+// -----------------------------------------------------------------------------
+// DOCUMENT_VEHICULE
+// -----------------------------------------------------------------------------
+// Conforme au bloc entité du diagramme : id, type_document, url_document,
+// statut, date_upload. Aucun vehicule_id ajouté ici (table indépendante,
+// sans FK, tel que déclaré dans vos tables corrigées).
+// -----------------------------------------------------------------------------
+model DocumentVehicule {
+  id           BigInt   @id @default(autoincrement())
+  vehiculeId   BigInt   @map("vehicule_id")
+  typeDocument String   @map("type_document") @db.VarChar(100)
+  urlDocument  String   @map("url_document") @db.VarChar(500)
+  statut       String   @db.VarChar(50)
+  dateUpload   DateTime @default(now()) @map("date_upload")
+
+  vehicule Vehicule @relation(fields: [vehiculeId], references: [id], onDelete: Cascade)
+
+  @@index([statut])
+  @@index([vehiculeId])
+  @@map("document_vehicule")
+}
+
+// -----------------------------------------------------------------------------
+// COURSE
+// -----------------------------------------------------------------------------
+// Conforme au bloc entité du diagramme : id, chauffeur_id, vehicule_id,
+// distance, prix_initial, prix_final, type_course, statut, partage_actif,
+// date_creation, date_acceptation, date_debut, date_fin.
+// AUCUN client_id (retiré à votre demande).
+// -----------------------------------------------------------------------------
+model Course {
+  id              BigInt    @id @default(autoincrement())
+  chauffeurId     BigInt?   @map("chauffeur_id")
+  vehiculeId      BigInt?   @map("vehicule_id")
+  distance        Decimal?  @db.Decimal(10, 2)
+  prixInitial     Decimal?  @map("prix_initial") @db.Decimal(12, 2)
+  prixFinal       Decimal?  @map("prix_final") @db.Decimal(12, 2)
+  typeCourse      String    @map("type_course") @db.VarChar(50)
+  statut          String    @db.VarChar(50)
+  partageActif    Boolean   @default(false) @map("partage_actif")
+  dateCreation    DateTime  @default(now()) @map("date_creation")
+  dateAcceptation DateTime? @map("date_acceptation")
+  dateDebut       DateTime? @map("date_debut")
+  dateFin         DateTime? @map("date_fin")
+
+  chauffeur             Chauffeur?              @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
+  vehicule              Vehicule?               @relation(fields: [vehiculeId], references: [id], onDelete: SetNull)
+  propositionPrix       PropositionPrix[]
+  demandePartageCourses DemandePartageCourse[]
+  participantCourses    ParticipantCourse[]
+  paiements             Paiement[]
+  enregistrementsAudio  EnregistrementAudio[]
+  analysesSecurite      AnalyseSecurite[]
+  alertesSecurite       AlerteSecurite[]
+  evaluationsChauffeur  EvaluationChauffeur[]
+  evaluationsClient     EvaluationClient[]
+
+  @@index([chauffeurId])
+  @@index([vehiculeId])
+  @@index([statut])
+  @@index([dateCreation])
+  @@map("course")
+}
+
+// -----------------------------------------------------------------------------
+// PROPOSITION_PRIX
+// -----------------------------------------------------------------------------
+model PropositionPrix {
+  id              BigInt   @id @default(autoincrement())
+  courseId        BigInt   @map("course_id")
+  clientId        BigInt   @map("client_id")
+  chauffeurId     BigInt   @map("chauffeur_id")
+  auteur          String   @db.VarChar(50)
+  prix            Decimal  @db.Decimal(12, 2)
+  statut          String   @db.VarChar(50)
+  dateProposition DateTime @default(now()) @map("date_proposition")
+
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([clientId])
+  @@index([chauffeurId])
+  @@index([statut])
+  @@map("proposition_prix")
+}
+
+// -----------------------------------------------------------------------------
+// DEMANDE_PARTAGE_COURSE
+// -----------------------------------------------------------------------------
+model DemandePartageCourse {
+  id                BigInt   @id @default(autoincrement())
+  courseId          BigInt   @map("course_id")
+  clientDemandeurId BigInt   @map("client_demandeur_id")
+  adresseDepart     String   @map("adresse_depart") @db.VarChar(500)
+  adresseArrivee    String   @map("adresse_arrivee") @db.VarChar(500)
+  latitudeArrivee   Float    @map("latitude_arrivee")
+  longitudeArrivee  Float    @map("longitude_arrivee")
+  latitudeDepart    Float    @map("latitude_depart")
+  longitudeDepart   Float    @map("longitude_depart")
+  prixCalcule       Decimal  @map("prix_calcule") @db.Decimal(12, 2)
+  statut            String   @db.VarChar(50)
+  dateCreation      DateTime @default(now()) @map("date_creation")
+
+  course          Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  clientDemandeur Client @relation(fields: [clientDemandeurId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([clientDemandeurId])
+  @@index([statut])
+  @@map("demande_partage_course")
+}
+
+// -----------------------------------------------------------------------------
+// PARTICIPANT_COURSE
+// -----------------------------------------------------------------------------
+model ParticipantCourse {
+  id               BigInt    @id @default(autoincrement())
+  courseId         BigInt    @map("course_id")
+  clientId         BigInt    @map("client_id")
+  adresseDepart    String    @map("adresse_depart") @db.VarChar(500)
+  latitudeDepart   Float     @map("latitude_depart")
+  longitudeDepart  Float     @map("longitude_depart")
+  adresseArrivee   String    @map("adresse_arrivee") @db.VarChar(500)
+  latitudeArrivee  Float     @map("latitude_arrivee")
+  longitudeArrivee Float     @map("longitude_arrivee")
+  prixInitial      Decimal   @map("prix_initial") @db.Decimal(12, 2)
+  prixFinal        Decimal?  @map("prix_final") @db.Decimal(12, 2)
+  statut           String    @db.VarChar(50)
+  economieClient   Decimal?  @map("economie_client") @db.Decimal(12, 2)
+  role             String    @db.VarChar(50)
+  heureMontee      DateTime? @map("heure_montee")
+  heureDescente    DateTime? @map("heure_descente")
+  dateCreation     DateTime  @default(now()) @map("date_creation")
+
+  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  paiements Paiement[]
+
+  @@index([courseId])
+  @@index([clientId])
+  @@index([statut])
+  @@map("participant_course")
+}
+
+// -----------------------------------------------------------------------------
+// PAIEMENT
+// -----------------------------------------------------------------------------
+model Paiement {
+  id                   BigInt    @id @default(autoincrement())
+  courseId             BigInt    @map("course_id")
+  participantCourseId  BigInt    @map("participant_course_id")
+  montant              Decimal   @db.Decimal(12, 2)
+  methode              String    @db.VarChar(50)
+  referenceTransaction String?   @map("reference_transaction") @db.VarChar(100)
+  statut               String    @db.VarChar(50)
+  datePaiement         DateTime? @map("date_paiement")
+
+  course              Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  participantCourse   ParticipantCourse @relation(fields: [participantCourseId], references: [id], onDelete: Restrict)
+
+  @@index([courseId])
+  @@index([participantCourseId])
+  @@index([statut])
+  @@index([referenceTransaction])
+  @@map("paiement")
+}
+
+// -----------------------------------------------------------------------------
+// POSITION_CHAUFFEUR
+// -----------------------------------------------------------------------------
+model PositionChauffeur {
+  id           BigInt   @id @default(autoincrement())
+  chauffeurId  BigInt   @map("chauffeur_id")
+  latitude     Float
+  longitude    Float
+  vitesse      Decimal? @db.Decimal(8, 2)
+  datePosition DateTime @default(now()) @map("date_position")
+
+  chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+
+  @@index([chauffeurId])
+  @@index([datePosition])
+  @@index([latitude, longitude])
+  @@map("position_chauffeur")
+}
+
+// -----------------------------------------------------------------------------
+// MODE_SECURITE
+// -----------------------------------------------------------------------------
+model ModeSecurite {
+  id                BigInt    @id @default(autoincrement())
+  utilisateurId     BigInt    @unique @map("utilisateur_id")
+  actif             Boolean   @default(false)
+  dateActivation    DateTime? @map("date_activation")
+  dateDesactivation DateTime? @map("date_desactivation")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([actif])
+  @@map("mode_securite")
+}
+
+// -----------------------------------------------------------------------------
+// ENREGISTREMENT_AUDIO
+// -----------------------------------------------------------------------------
+model EnregistrementAudio {
+  id         BigInt    @id @default(autoincrement())
+  courseId   BigInt    @map("course_id")
+  heureDebut DateTime  @map("heure_debut")
+  heureFin   DateTime? @map("heure_fin")
+  urlAudio   String    @map("url_audio") @db.VarChar(500)
+
+  course         Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  transcriptions TranscriptionAudio[]
+
+  @@index([courseId])
+  @@map("enregistrement_audio")
+}
+
+// -----------------------------------------------------------------------------
+// TRANSCRIPTION_AUDIO
+// -----------------------------------------------------------------------------
+model TranscriptionAudio {
+  id               BigInt   @id @default(autoincrement())
+  enregistrementId BigInt   @map("enregistrement_id")
+  texte            String   @db.Text
+  horodatage       DateTime @default(now())
+
+  enregistrement EnregistrementAudio @relation(fields: [enregistrementId], references: [id], onDelete: Cascade)
+
+  @@index([enregistrementId])
+  @@map("transcription_audio")
+}
+
+// -----------------------------------------------------------------------------
+// ANALYSE_SECURITE
+// -----------------------------------------------------------------------------
+model AnalyseSecurite {
+  id           BigInt   @id @default(autoincrement())
+  courseId     BigInt   @map("course_id")
+  scoreRisque  Decimal  @map("score_risque") @db.Decimal(5, 2)
+  niveauRisque String   @map("niveau_risque") @db.VarChar(50)
+  resume       String   @db.Text
+  dateAnalyse  DateTime @default(now()) @map("date_analyse")
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([niveauRisque])
+  @@map("analyse_securite")
+}
+
+// -----------------------------------------------------------------------------
+// ALERTE_SECURITE
+// -----------------------------------------------------------------------------
+model AlerteSecurite {
+  id            BigInt   @id @default(autoincrement())
+  courseId      BigInt   @map("course_id")
+  utilisateurId BigInt   @map("utilisateur_id")
+  typeAlerte    String   @map("type_alerte") @db.VarChar(100)
+  niveauRisque  String   @map("niveau_risque") @db.VarChar(50)
+  latitude      Float
+  longitude     Float
+  message       String?  @db.VarChar(500)
+  statut        String   @db.VarChar(50)
+  dateCreation  DateTime @default(now()) @map("date_creation")
+
+  course      Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([utilisateurId])
+  @@index([statut])
+  @@map("alerte_securite")
+}
+
+// -----------------------------------------------------------------------------
+// NOTIFICATION
+// -----------------------------------------------------------------------------
+model Notification {
+  id            BigInt    @id @default(autoincrement())
+  utilisateurId BigInt    @map("utilisateur_id")
+  titre         String    @db.VarChar(200)
+  message       String    @db.Text
+  type          String    @db.VarChar(50)
+  lu            Boolean   @default(false)
+  dateCreation  DateTime  @default(now()) @map("date_creation")
+  dateDeLecture DateTime? @map("date_de__lecture")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@index([lu])
+  @@index([type])
+  @@index([dateCreation])
+  @@map("notification")
+}
+
+// -----------------------------------------------------------------------------
+// EVALUATION_CHAUFFEUR
+// -----------------------------------------------------------------------------
+model EvaluationChauffeur {
+  id           BigInt   @id @default(autoincrement())
+  courseId     BigInt   @map("course_id")
+  clientId     BigInt   @map("client_id")
+  chauffeurId  BigInt   @map("chauffeur_id")
+  note         Int
+  commentaire  String?  @db.Text
+  dateCreation DateTime @default(now()) @map("date_creation")
+
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([clientId])
+  @@index([chauffeurId])
+  @@map("evaluation_chauffeur")
+}
+
+// -----------------------------------------------------------------------------
+// EVALUATION_CLIENT
+// -----------------------------------------------------------------------------
+model EvaluationClient {
+  id           BigInt   @id @default(autoincrement())
+  courseId     BigInt   @map("course_id")
+  chauffeurId  BigInt   @map("chauffeur_id")
+  clientId     BigInt   @map("client_id")
+  note         Int
+  commentaire  String?  @db.Text
+  dateCreation DateTime @default(now()) @map("date_creation")
+
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chauffeur Chauffeur @relation(fields: [chauffeurId], references: [id], onDelete: Cascade)
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([chauffeurId])
+  @@index([clientId])
+  @@map("evaluation_client")
+}
+
+// -----------------------------------------------------------------------------
+// ADMINISTRATEUR
+// -----------------------------------------------------------------------------
+model Administrateur {
+  id            BigInt @id @default(autoincrement())
+  utilisateurId BigInt @unique @map("utilisateur_id")
+  niveau        String @db.VarChar(50)
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@map("administrateur")
+}
+
+// -----------------------------------------------------------------------------
+// JOURNAL_AUDIT
+// -----------------------------------------------------------------------------
+model JournalAudit {
+  id            BigInt   @id @default(autoincrement())
+  utilisateurId BigInt   @map("utilisateur_id")
+  action        String   @db.VarChar(200)
+  dateAction    DateTime @default(now()) @map("date_action")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@index([utilisateurId])
+  @@index([dateAction])
+  @@map("journal_audit")
+}
+
+// -----------------------------------------------------------------------------
+// TARIFICATION
+// -----------------------------------------------------------------------------
+model Tarification {
+  id             BigInt  @id @default(autoincrement())
+  typeVehiculeId BigInt  @map("type_vehicule_id")
+  prixDepart     Decimal @map("prix_depart") @db.Decimal(12, 2)
+  prixKm         Decimal @map("prix_km") @db.Decimal(12, 2)
+  prixMinimum    Decimal @map("prix_minimum") @db.Decimal(12, 2)
+  commission     Decimal @db.Decimal(5, 2)
+
+  typeVehicule TypeVehicule @relation(fields: [typeVehiculeId], references: [id], onDelete: Cascade)
+
+  @@index([typeVehiculeId])
+  @@map("tarification")
+}

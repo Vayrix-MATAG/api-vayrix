@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "test",
+    "dist",
+    "**/*spec.ts",
+    "src/drivers",
+    "src/vehicles",
+    "src/rides",
+    "src/payments",
+    "src/notifications",
+    "src/uploads",
+    "src/sos",
+    "src/sharing",
+    "src/realtime",
+    "src/queues"
+  ]
+}

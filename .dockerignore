@@ -1,0 +1,27 @@
+# Dépendances
+node_modules
+dist
+coverage
+.git
+.gitignore
+
+# Environnement local (ne jamais copier dans l'image)
+.env
+.env.*
+!.env.example
+
+# IDE & logs
+.idea
+.vscode
+*.log
+npm-debug.log*
+
+# Tests
+test
+*.spec.ts
+
+# Documentation & CI
+README.md
+.editorconfig
+.prettierrc
+eslint.config.mjs
