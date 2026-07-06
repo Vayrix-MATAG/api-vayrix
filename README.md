@@ -2,8 +2,267 @@
 
 Backend NestJS 11 pour la plateforme de transport **VAYRIX** (type Uber).
 
-- **Stack** : NestJS, Prisma 7, PostgreSQL, JWT, Redis, Nodemailer, Swagger
-- **Documentation API** : `http://localhost:3000/docs` (après démarrage)
+| Élément | Détail |
+|---------|--------|
+| **Stack** | NestJS 11, Prisma 7, PostgreSQL, JWT, Nodemailer, Swagger |
+| **Préfixe API** | `/api/v1` |
+| **Documentation** | `http://localhost:<PORT>` → connexion OTP → `/docs` |
+| **Santé** | `GET /api/v1/health` |
+
+---
+
+## État du projet
+
+### Modules actifs (fonctionnels)
+
+| Module | Rôle | Statut |
+|--------|------|--------|
+| **Auth** | Inscription, connexion, OTP, reset MDP, session JWT | ✅ Opérationnel |
+| **Users** | Profil utilisateur connecté | ✅ Opérationnel |
+| **Otp** | Génération / vérification OTP (table `otp`) | ✅ Opérationnel |
+| **Mail** | Emails HTML (OTP, bienvenue, reset MDP) via Nodemailer | ✅ Opérationnel |
+| **Sms** | Envoi SMS (`mock` dev / `http` prod) | ✅ Opérationnel |
+| **Prisma** | Accès PostgreSQL (pool de connexions) | ✅ Opérationnel |
+| **Docs** | Page de connexion + protection Swagger | ✅ Opérationnel |
+| **Common** | Guards JWT, rôles, intercepteurs, filtres, Swagger helpers | ✅ Opérationnel |
+
+### Modules en attente (code présent, non chargés dans `AppModule`)
+
+Ces modules existent dans `src/` mais sont **désactivés** le temps de finaliser la migration Prisma. Ils sont exclus du build (`tsconfig.build.json`).
+
+| Module | Domaine métier |
+|--------|----------------|
+| `drivers` | Chauffeurs |
+| `vehicles` | Véhicules |
+| `rides` | Courses |
+| `payments` | Paiements |
+| `notifications` | Notifications |
+| `uploads` | Fichiers |
+| `sos` | Alertes SOS |
+| `sharing` | Partage de courses |
+| `realtime` | WebSocket (Socket.IO) |
+| `queues` | Files d'attente (BullMQ / Redis) |
+
+### Base de données (Prisma)
+
+- **28 tables** PostgreSQL (schéma français : `Utilisateur`, `Course`, `Chauffeur`, etc.)
+- **Seed** : données de démonstration sur l'ensemble des tables
+- **OTP** centralisé dans la table `otp` (plus de champs OTP sur `Utilisateur`)
+
+---
+
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph Client
+        WEB[Navigateur / App mobile]
+    end
+
+    subgraph NestJS["NestJS API (port .env)"]
+        MAIN[main.ts]
+        MW[docs-auth.middleware]
+        AUTH[AuthModule]
+        USERS[UsersModule]
+        OTP[OtpModule]
+        MAIL[MailModule]
+        SMS[SmsModule]
+        PRISMA[PrismaModule]
+        COMMON[CommonModule<br/>Guards · Interceptors · Filters]
+    end
+
+    subgraph Infra
+        PG[(PostgreSQL)]
+        SMTP[SMTP Gmail / autre]
+        SMSAPI[SMS API externe]
+    end
+
+    WEB -->|"/" connexion OTP| MW
+    WEB -->|"/docs" Swagger| MW
+    WEB -->|"/api/v1/*"| AUTH
+    WEB -->|"/api/v1/*"| USERS
+
+    MW -->|JWT cookie| AUTH
+    AUTH --> OTP
+    AUTH --> MAIL
+    AUTH --> SMS
+    AUTH --> USERS
+    AUTH --> PRISMA
+    USERS --> PRISMA
+    OTP --> PRISMA
+    PRISMA --> PG
+    MAIL --> SMTP
+    SMS --> SMSAPI
+```
+
+### Flux d'une requête API
+
+1. **Entrée** → `ValidationPipe` (DTO) → `JwtAuthGuard` global (sauf `@Public()`)
+2. **Controller** → **Service** → **Repository** → **Prisma**
+3. **Sortie** → `TransformInterceptor` enveloppe la réponse :
+
+```json
+{
+  "success": true,
+  "message": "Succès",
+  "data": { ... },
+  "timestamp": "2026-07-06T20:00:00.000Z"
+}
+```
+
+### Sécurité
+
+- **JWT** : access token (15 min) + refresh token (7 j)
+- **Guard global** : `JwtAuthGuard` — décorateur `@Public()` pour les routes ouvertes
+- **Rôles** : `RolesGuard` + `@Roles()` (prêt, utilisé par les modules métier à venir)
+- **Rate limiting** : `ThrottlerModule`
+- **Helmet** : en-têtes HTTP sécurisés
+- **Swagger** : protégé par connexion email + OTP (`vayrix_docs_token` cookie)
+
+---
+
+## API fonctionnelles
+
+> Toutes les routes ci-dessous sont préfixées par **`/api/v1`**.  
+> Les routes marquées 🔒 nécessitent `Authorization: Bearer <accessToken>`.
+
+### Health
+
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| `GET` | `/health` | Public | Vérifier que l'API est en ligne |
+
+### Auth — Inscription & connexion
+
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| `POST` | `/auth/signup` | Public | Inscription CLIENT ou CHAUFFEUR + email de bienvenue |
+| `POST` | `/auth/login` | Public | Connexion email/téléphone + mot de passe |
+| `POST` | `/auth/send-phone-otp` | Public | Envoyer OTP SMS (connexion) |
+| `POST` | `/auth/verify-phone-otp` | Public | Vérifier OTP SMS et obtenir JWT |
+| `POST` | `/auth/send-email-otp` | Public | Envoyer OTP email (connexion) |
+| `POST` | `/auth/verify-email-otp` | Public | Vérifier OTP email et obtenir JWT |
+| `POST` | `/auth/refresh` | Public | Rafraîchir access + refresh token |
+| `POST` | `/auth/logout` | 🔒 | Invalider le refresh token |
+| `GET` | `/auth/profile` | 🔒 | Profil de l'utilisateur connecté |
+
+### Auth — Réinitialisation mot de passe
+
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| `POST` | `/auth/forgot-password` | Public | OTP reset par SMS |
+| `POST` | `/auth/reset-password` | Public | Confirmer nouveau MDP (SMS) |
+| `POST` | `/auth/forgot-password-email` | Public | OTP reset par email |
+| `POST` | `/auth/verify-forgot-password-email` | Public | Vérifier OTP reset email |
+| `POST` | `/auth/reset-password-email` | Public | Confirmer nouveau MDP (email) |
+
+### Auth — Divers
+
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| `POST` | `/auth/verify-email` | Public | Vérifier email et activer compte client |
+| `POST` | `/auth/resend-code` | Public | Renvoyer un code OTP par SMS |
+| `POST` | `/auth/login/otp/request` | Public | *(legacy, masqué Swagger)* alias SMS OTP |
+| `POST` | `/auth/login/otp/verify` | Public | *(legacy, masqué Swagger)* alias SMS OTP |
+
+### Users — Profil
+
+| Méthode | Route | Auth | Description |
+|---------|-------|------|-------------|
+| `GET` | `/users/me` | 🔒 | Mon profil complet |
+| `PATCH` | `/users/me` | 🔒 | Modifier nom / prénom |
+| `PATCH` | `/users/photo` | 🔒 | Modifier photo de profil |
+| `PATCH` | `/users/langue` | 🔒 | Modifier langue |
+| `PATCH` | `/users/telephone` | 🔒 | Modifier téléphone |
+| `DELETE` | `/users/me` | 🔒 | Supprimer mon compte |
+| `GET` | `/users/:id` | 🔒 | Détail d'un utilisateur par ID |
+
+### Comptes de test (seed)
+
+| Rôle | Email | Téléphone | Mot de passe |
+|------|-------|-----------|--------------|
+| Admin | `admin@vayrix.com` | `+221770000001` | `Password123!` |
+| Client | `client@vayrix.com` | `+221770000002` | `Password123!` |
+| Chauffeur | `chauffeur@vayrix.com` | `+221770000003` | `Password123!` |
+| Admin | `nengue382@gmail.com` | `+237697573894` | `admin123` |
+
+```bash
+npx prisma migrate reset --force   # Réinitialiser + seed
+npm run prisma:seed                # Seed seul (base vide)
+```
+
+---
+
+## Structure du projet
+
+```
+Backend cursor/
+├── prisma/
+│   ├── schema.prisma          # Schéma 28 tables
+│   ├── seed.ts                # Données de démonstration
+│   └── migrations/            # Migrations SQL
+├── generated/prisma/          # Client Prisma généré
+├── public/
+│   ├── assets/vayrix-logo.png # Logo (page connexion + Swagger)
+│   ├── docs-login.html        # Page connexion documentation
+│   ├── docs-login.css
+│   ├── docs-login.js
+│   └── swagger-custom.js      # JWT auto + bouton déconnexion
+├── docker/
+│   ├── entrypoint.sh          # Migrations + démarrage container
+│   └── swarm.env.example      # Modèle déploiement Swarm
+├── src/
+│   ├── main.ts                # Bootstrap, Swagger, middleware docs
+│   ├── app.module.ts          # Modules actifs
+│   ├── app.controller.ts      # GET /health
+│   ├── config/
+│   │   └── configuration.ts   # Mapping .env → ConfigService
+│   ├── docs/
+│   │   └── docs-auth.middleware.ts  # Protection / et /docs
+│   ├── auth/
+│   │   ├── auth.module.ts
+│   │   ├── auth.controller.ts
+│   │   ├── auth.service.ts
+│   │   ├── repositories/
+│   │   ├── dto/
+│   │   ├── entities/
+│   │   └── strategies/jwt.strategy.ts
+│   ├── users/
+│   │   ├── users.module.ts
+│   │   ├── users.controller.ts
+│   │   ├── users.service.ts
+│   │   ├── repositories/
+│   │   ├── dto/
+│   │   └── entities/
+│   ├── otp/                   # Service OTP centralisé
+│   ├── mail/                  # Nodemailer + templates HTML
+│   ├── sms/                   # Provider mock | http
+│   ├── prisma/                # PrismaService (pool PG)
+│   ├── common/
+│   │   ├── guards/            # JwtAuthGuard, RolesGuard
+│   │   ├── decorators/        # @Public, @Roles, @CurrentUser
+│   │   ├── interceptors/      # Transform, Logging
+│   │   ├── filters/           # Exceptions, Prisma
+│   │   ├── swagger/           # Config + helpers Swagger
+│   │   └── dto/               # ApiResponseDto, pagination
+│   │
+│   │  # ── Modules métier (présents, non activés) ──
+│   ├── drivers/
+│   ├── vehicles/
+│   ├── rides/
+│   ├── payments/
+│   ├── notifications/
+│   ├── uploads/
+│   ├── sos/
+│   ├── sharing/
+│   ├── realtime/
+│   └── queues/
+├── .env                       # Configuration locale (unique)
+├── .env.example               # Modèle Git (non lu par l'app)
+├── docker-stack.yml
+├── Dockerfile
+└── README.md
+```
 
 ---
 
@@ -11,7 +270,7 @@ Backend NestJS 11 pour la plateforme de transport **VAYRIX** (type Uber).
 
 - Node.js 22+
 - PostgreSQL 16+
-- Redis 7+ (optionnel, modules files d'attente)
+- Redis 7+ (optionnel — requis pour `queues` / `realtime` à l'activation)
 - npm
 
 ---
@@ -22,7 +281,7 @@ Backend NestJS 11 pour la plateforme de transport **VAYRIX** (type Uber).
 npm install
 ```
 
-Configurez **uniquement** le fichier `.env` à la racine du projet (toutes les variables y sont listées).
+Configurez **uniquement** le fichier `.env` à la racine (toutes les variables y sont listées).
 
 ### Base de données
 
@@ -35,128 +294,44 @@ npx prisma generate
 ### Démarrage
 
 ```bash
-# Développement (watch)
-npm run start:dev
-
-# Production
-npm run build
-npm run start:prod
+npm run start:dev      # Développement (watch)
+npm run build          # Compilation
+npm run start:prod     # Production
 ```
 
-L'API est disponible sur `http://localhost:3000/api/v1`.
+L'API REST est sur `http://localhost:<PORT>/api/v1`.
 
-### Documentation Swagger (interface unique)
+### Documentation Swagger
 
-1. Ouvrir **`http://localhost:<PORT>`** (racine du backend)
-2. Si non connecté → page de connexion (email + code OTP)
-3. Si déjà connecté → redirection automatique vers **`/docs`**
-4. Le JWT est injecté automatiquement pour tester les endpoints protégés
+1. Ouvrir **`http://localhost:<PORT>`**
+2. Non connecté → page de connexion (email + code OTP)
+3. Connecté → redirection automatique vers **`/docs`**
+4. Bouton **Déconnexion** en haut à droite de Swagger
 
 ---
 
 ## Variables d'environnement
 
-**Fichier unique : `.env`** — toute la configuration de l'application passe par ce fichier.  
-`src/config/configuration.ts` lit exclusivement `process.env` (chargé depuis `.env` via NestJS ConfigModule).
+**Fichier unique : `.env`** — `src/config/configuration.ts` lit `process.env` via `ConfigModule`.
 
-> `.env.example` est un modèle Git sans secrets, **non lu par l'application**. Ne configurez que `.env`.
+> `.env.example` est un modèle Git sans secrets, **non lu par l'application**.
 
-Résumé des sections :
+| Section | Variables clés |
+|---------|----------------|
+| Application | `NODE_ENV`, `PORT`, `API_PREFIX`, `FRONTEND_URL` |
+| Base de données | `DATABASE_URL`, `DATABASE_POOL_MAX` |
+| JWT | `JWT_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EXPIRES_IN`, `JWT_REFRESH_EXPIRES_IN` |
+| Email | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD`, `MAIL_FROM_*` |
+| SMS | `SMS_PROVIDER` (`mock` \| `http`), `SMS_API_URL`, `SMS_API_KEY` |
+| OTP | `OTP_EXPIRY_MINUTES`, `OTP_RESEND_COOLDOWN_SECONDS`, `OTP_MAX_ATTEMPTS` |
+| Redis | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` |
+| CORS | `CORS_ORIGINS` |
+| Rate limit | `THROTTLE_TTL`, `THROTTLE_LIMIT` |
 
-### Application
+> **Gmail :** [mot de passe d'application](https://myaccount.google.com/apppasswords) requis pour `MAIL_PASSWORD`.
 
-| Variable | Description | Défaut |
-|----------|-------------|--------|
-| `NODE_ENV` | Environnement | `development` |
-| `PORT` | Port HTTP | `3000` |
-| `API_PREFIX` | Préfixe des routes | `api/v1` |
-| `FRONTEND_URL` | URL frontend (liens emails) | `http://localhost:3000` |
-
-### Base de données
-
-| Variable | Description |
-|----------|-------------|
-| `DATABASE_URL` | URL PostgreSQL Prisma |
-
-### JWT
-
-| Variable | Description |
-|----------|-------------|
-| `JWT_SECRET` | Clé secrète access token |
-| `JWT_REFRESH_SECRET` | Clé secrète refresh token |
-| `JWT_EXPIRES_IN` | Durée access token (`15m`) |
-| `JWT_REFRESH_EXPIRES_IN` | Durée refresh token (`7d`) |
-
-### Email (SMTP — Nodemailer)
-
-Configuration dans `src/config/configuration.ts` → section `mail`.  
-Service : `src/mail/mail.service.ts`.
-
-| Variable | Description | Exemple |
-|----------|-------------|---------|
-| `MAIL_HOST` | Serveur SMTP | `smtp.gmail.com` |
-| `MAIL_PORT` | Port SMTP | `587` |
-| `MAIL_SECURE` | TLS direct (`true`/`false`) | `false` |
-| `MAIL_USER` | Utilisateur SMTP | `votre@email.com` |
-| `MAIL_PASSWORD` | Mot de passe application | *(secret)* |
-| `MAIL_FROM_EMAIL` | Expéditeur | `noreply@vayrix.com` |
-| `MAIL_FROM_NAME` | Nom expéditeur | `VAYRIX` |
-| `MAIL_LOGO_URL` | URL logo emails (optionnel) | `https://…/logo.png` |
-
-> **Gmail :** utilisez un [mot de passe d'application](https://myaccount.google.com/apppasswords), pas le mot de passe du compte.
-
-### SMS
-
-Configuration dans `src/config/configuration.ts` → section `sms`.  
-Service : `src/sms/sms.service.ts` (envoi uniquement, pas de logique OTP).
-
-| Variable | Description | Défaut |
-|----------|-------------|--------|
-| `SMS_PROVIDER` | `mock` (dev, log console) ou `http` (API REST prod) | `mock` |
-| `SMS_API_URL` | URL endpoint envoi SMS | — |
-| `SMS_API_KEY` | Clé API / Bearer token | — |
-| `SMS_API_SECRET` | Secret complémentaire (optionnel) | — |
-| `SMS_SENDER_ID` | Identifiant expéditeur | `VAYRIX` |
-
-En **développement** (`SMS_PROVIDER=mock`), les codes OTP SMS s'affichent dans les logs du serveur.
-
-En **production** (`SMS_PROVIDER=http`), le service envoie une requête `POST` JSON vers `SMS_API_URL` avec les headers `Authorization: Bearer {SMS_API_KEY}`.
-
-### OTP
-
-Configuration dans `src/config/configuration.ts` → section `otp`.  
-Logique métier : `src/otp/otp.service.ts` (table Prisma `otp`).
-
-| Variable | Description | Défaut |
-|----------|-------------|--------|
-| `OTP_EXPIRY_MINUTES` | Expiration code | `5` |
-| `OTP_RESEND_COOLDOWN_SECONDS` | Délai entre 2 envois | `60` |
-| `OTP_MAX_ATTEMPTS` | Tentatives max | `5` |
-
----
-
-## Authentification — Endpoints
-
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| POST | `/auth/signup` | Inscription |
-| POST | `/auth/login` | Connexion email/téléphone + mot de passe |
-| POST | `/auth/send-phone-otp` | OTP SMS connexion |
-| POST | `/auth/verify-phone-otp` | Vérification OTP SMS |
-| POST | `/auth/send-email-otp` | OTP email connexion |
-| POST | `/auth/verify-email-otp` | Vérification OTP email |
-| POST | `/auth/login/otp/request` | *(legacy)* OTP SMS |
-| POST | `/auth/login/otp/verify` | *(legacy)* Vérification OTP SMS |
-| POST | `/auth/forgot-password` | Reset MDP via SMS |
-| POST | `/auth/reset-password` | Confirmer reset SMS |
-| POST | `/auth/forgot-password-email` | Reset MDP via email |
-| POST | `/auth/verify-forgot-password-email` | Vérifier OTP reset email |
-| POST | `/auth/reset-password-email` | Confirmer reset email |
-| POST | `/auth/refresh` | Rafraîchir JWT |
-| POST | `/auth/logout` | Déconnexion |
-| GET | `/auth/profile` | Profil connecté |
-
-Comptes seed : `client@vayrix.com` / `Password123!`
+En dev (`SMS_PROVIDER=mock`), les codes OTP SMS s'affichent dans les logs serveur.  
+En dev, les codes OTP email peuvent aussi apparaître dans les logs (`[MAIL:DEV]`).
 
 ---
 
@@ -175,108 +350,44 @@ npx prisma migrate reset --force   # Réinitialiser la BD (destructif)
 
 ## Déploiement Docker Swarm
 
-Fichiers :
-
 | Fichier | Rôle |
 |---------|------|
 | `Dockerfile` | Image multi-étapes Node 22 Alpine |
 | `docker-stack.yml` | Stack Swarm (API + PostgreSQL + Redis) |
 | `docker/entrypoint.sh` | Migrations Prisma + démarrage |
-| `docker/swarm.env.example` | Modèle Git pour le déploiement Swarm uniquement (pas pour le dev local) |
-
-### 1. Initialiser Swarm (manager)
+| `docker/swarm.env.example` | Modèle Git pour Swarm (pas pour le dev local) |
 
 ```bash
 docker swarm init
 docker network create --driver overlay vayrix-net
-```
 
-### 2. Créer les secrets
-
-```bash
-echo "votre-jwt-secret"     | docker secret create vayrix_jwt_secret -
+# Secrets
+echo "votre-jwt-secret"      | docker secret create vayrix_jwt_secret -
 echo "votre-refresh-secret"  | docker secret create vayrix_jwt_refresh_secret -
 echo "mot-de-passe-postgres" | docker secret create vayrix_db_password -
 echo "mot-de-passe-smtp"     | docker secret create vayrix_mail_password -
-echo "cle-api-sms"           | docker secret create vayrix_sms_api_key -
-```
+echo "cle-api-sms"             | docker secret create vayrix_sms_api_key -
 
-### 3. Builder l'image
-
-```bash
 docker build -t vayrix-api:latest .
-```
-
-### 4. Déployer la stack
-
-En production Swarm, les secrets sensibles passent par `docker secret` (voir étape 2).  
-Les variables non secrètes peuvent être exportées depuis un fichier `docker/swarm.env` local (non versionné) :
-
-```bash
-cp docker/swarm.env.example docker/swarm.env
-# Éditer docker/swarm.env (MAIL_USER, SMS_API_URL, CORS…)
-
-export $(grep -v '^#' docker/swarm.env | xargs)
 docker stack deploy -c docker-stack.yml vayrix
 ```
 
-> Le développement local utilise **uniquement** `.env` à la racine du projet.
-
-### 5. Vérifier
-
-```bash
-docker stack services vayrix
-docker service logs vayrix_api -f
-curl http://localhost:3000/api/v1/health
-```
-
-### Mise à jour
-
-```bash
-docker build -t vayrix-api:latest .
-docker service update --force vayrix_api
-```
-
-### Supprimer la stack
-
-```bash
-docker stack rm vayrix
-```
+> Le développement local utilise **uniquement** `.env` à la racine.
 
 ---
 
-## Structure des modules
-
-```
-src/
-├── auth/          # Authentification (JWT, signup, login)
-├── users/         # Profil utilisateur
-├── otp/           # Logique OTP centralisée (table otp)
-├── mail/          # Envoi emails HTML (Nodemailer)
-├── sms/           # Envoi SMS (mock ou HTTP)
-├── prisma/        # PrismaService
-└── config/        # configuration.ts (ConfigModule)
-```
-
-## Swagger
-
-Documentation interactive : **`http://localhost:3000/docs`**
-
-### Maintenir Swagger à jour
+## Maintenir Swagger à jour
 
 Lors de l'ajout ou la modification d'un endpoint :
 
-1. Annoter le controller avec `@ApiTags`, `@ApiOperation`, `@ApiBody`, `@ApiBearerAuth('JWT')`
-2. Utiliser les helpers de `src/common/swagger/swagger.helpers.ts` :
-   - `@ApiWrappedOkResponse(Entity)` — réponse enveloppée `{ success, data, ... }`
+1. Annoter le controller : `@ApiTags`, `@ApiOperation`, `@ApiBody`, `@ApiBearerAuth('JWT')`
+2. Utiliser les helpers `src/common/swagger/swagger.helpers.ts` :
+   - `@ApiWrappedOkResponse(Entity)` — réponse `{ success, data, ... }`
    - `@ApiWrappedCreatedResponse(Entity)` — réponse 201
-   - `@ApiPublicErrors()` — endpoints publics
-   - `@ApiProtectedErrors()` — endpoints JWT
+   - `@ApiPublicErrors()` / `@ApiProtectedErrors()`
 3. Ajouter `@ApiProperty` sur chaque champ des DTO et entités
+4. Enregistrer le module dans `AppModule` et dans `include` de `main.ts` (`SwaggerModule.createDocument`)
 
 ---
 
-Projet privé — VAYRIX.
-#   a p i - v a y r i x 
- 
- 
+Projet privé — **VAYRIX** © 2026
