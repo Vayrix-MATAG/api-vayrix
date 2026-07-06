@@ -41,9 +41,11 @@ const prisma = new client_1.PrismaClient({
     adapter: new adapter_pg_1.PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 const DEFAULT_PASSWORD = 'Password123!';
+const NENGUE_PASSWORD = 'admin123';
 async function main() {
-    console.log('Demarrage du seed VAYRIX (admin, client, chauffeur)...');
+    console.log('Demarrage du seed VAYRIX (admin, client, chauffeur, nengue)...');
     const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+    const hashedNenguePassword = await bcrypt.hash(NENGUE_PASSWORD, 12);
     const roleAdmin = await prisma.role.create({
         data: { nom: 'ADMIN', description: 'Administrateur systeme VAYRIX' },
     });
@@ -89,11 +91,24 @@ async function main() {
             derniereConnexion: new Date(),
         },
     });
+    const utilisateurNengue = await prisma.utilisateur.create({
+        data: {
+            nom: 'Nengue',
+            prenom: 'Admin',
+            telephone: '+237697573894',
+            email: 'nengue382@gmail.com',
+            motDePasse: hashedNenguePassword,
+            photo: 'storage/photos/admin-nengue.jpg',
+            langue: 'fr',
+            derniereConnexion: new Date(),
+        },
+    });
     await prisma.utilisateurRole.createMany({
         data: [
             { utilisateurId: utilisateurAdmin.id, roleId: roleAdmin.id },
             { utilisateurId: utilisateurClient.id, roleId: roleClient.id },
             { utilisateurId: utilisateurChauffeur.id, roleId: roleChauffeur.id },
+            { utilisateurId: utilisateurNengue.id, roleId: roleAdmin.id },
         ],
     });
     const client = await prisma.client.create({
@@ -116,6 +131,12 @@ async function main() {
     await prisma.administrateur.create({
         data: {
             utilisateurId: utilisateurAdmin.id,
+            niveau: 'SUPER_ADMIN',
+        },
+    });
+    await prisma.administrateur.create({
+        data: {
+            utilisateurId: utilisateurNengue.id,
             niveau: 'SUPER_ADMIN',
         },
     });
@@ -380,6 +401,7 @@ async function main() {
     console.log(`  Admin     : admin@vayrix.com`);
     console.log(`  Client    : client@vayrix.com`);
     console.log(`  Chauffeur : chauffeur@vayrix.com`);
+    console.log(`  Nengue    : nengue382@gmail.com (+237697573894) — mot de passe : admin123`);
     console.log('');
     console.log('28 tables peuplees avec donnees de demonstration.');
 }

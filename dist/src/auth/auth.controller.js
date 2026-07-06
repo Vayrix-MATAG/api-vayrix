@@ -158,6 +158,7 @@ __decorate([
 ], AuthController.prototype, "verifyPhoneOtp", null);
 __decorate([
     (0, public_decorator_1.Public)(),
+    (0, swagger_1.ApiExcludeEndpoint)(),
     (0, common_1.Post)('login/otp/request'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({
@@ -174,6 +175,7 @@ __decorate([
 ], AuthController.prototype, "requestLoginOtp", null);
 __decorate([
     (0, public_decorator_1.Public)(),
+    (0, swagger_1.ApiExcludeEndpoint)(),
     (0, common_1.Post)('login/otp/verify'),
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({

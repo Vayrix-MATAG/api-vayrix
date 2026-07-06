@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VAYRIX — Connexion Documentation API</title>
+    <link rel="icon" type="image/png" href="/assets/vayrix-logo.png" />
+    <link rel="stylesheet" href="/docs-login.css" />
+  </head>
+  <body>
+    <div class="bg-orbs" aria-hidden="true">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+
+    <main class="card">
+      <div class="logo-wrap">
+        <img src="/assets/vayrix-logo.png" alt="VAYRIX" class="logo" width="88" height="88" />
+        <div class="brand">VAYRIX</div>
+      </div>
+
+      <p class="subtitle">
+        Connectez-vous avec votre email pour accéder à la documentation API Swagger.
+      </p>
+
+      <form onsubmit="return false;">
+        <div class="field">
+          <label for="email">Adresse email</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            placeholder="vous@exemple.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div id="otp-row" class="field otp-row">
+          <label for="otp">Code OTP</label>
+          <input
+            id="otp"
+            class="otp-input"
+            type="text"
+            name="otp"
+            placeholder="000000"
+            inputmode="numeric"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            autocomplete="one-time-code"
+          />
+        </div>
+
+        <button type="button" id="send-btn" class="btn btn-primary">Envoyer le code</button>
+        <button type="button" id="verify-btn" class="btn btn-primary" style="display: none">
+          Accéder à la documentation
+        </button>
+        <button type="button" id="back-btn" class="btn btn-secondary">Changer d'email</button>
+      </form>
+
+      <div id="alert" class="alert" role="alert"></div>
+
+      <p class="footer">Documentation API sécurisée — VAYRIX &copy; 2026</p>
+    </main>
+
+    <script src="/docs-login.js"></script>
+  </body>
+</html>

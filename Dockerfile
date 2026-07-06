@@ -12,6 +12,7 @@ COPY prisma ./prisma
 COPY prisma.config.ts ./
 COPY tsconfig.json tsconfig.build.json nest-cli.json ./
 COPY src ./src
+COPY public ./public
 COPY generated ./generated
 
 RUN npx prisma generate
@@ -30,6 +31,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./

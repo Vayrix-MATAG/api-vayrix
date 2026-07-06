@@ -20,6 +20,10 @@ Tous les endpoints protégés requièrent un header \`Authorization: Bearer <acc
 | Reset MDP SMS | \`POST /auth/forgot-password\` → \`POST /auth/reset-password\` |
 | Reset MDP Email | \`POST /auth/forgot-password-email\` → \`POST /auth/reset-password-email\` |
 
+### Accès à la documentation Swagger
+
+La documentation est protégée : ouvrez \`http://localhost:<PORT>\` — connexion par **email + code OTP**, puis accès automatique à \`/docs\` si vous êtes déjà connecté.
+
 ### Format de réponse
 
 Toutes les réponses sont enveloppées :

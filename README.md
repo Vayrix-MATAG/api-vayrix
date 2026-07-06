@@ -45,6 +45,13 @@ npm run start:prod
 
 L'API est disponible sur `http://localhost:3000/api/v1`.
 
+### Documentation Swagger (interface unique)
+
+1. Ouvrir **`http://localhost:<PORT>`** (racine du backend)
+2. Si non connecté → page de connexion (email + code OTP)
+3. Si déjà connecté → redirection automatique vers **`/docs`**
+4. Le JWT est injecté automatiquement pour tester les endpoints protégés
+
 ---
 
 ## Variables d'environnement
@@ -270,5 +277,6 @@ Lors de l'ajout ou la modification d'un endpoint :
 ---
 
 Projet privé — VAYRIX.
-#   a p i - v a y r i x  
+#   a p i - v a y r i x 
+ 
  

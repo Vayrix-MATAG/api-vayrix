@@ -2,20 +2,42 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
+import { join } from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { buildSwaggerDocument } from './common/swagger/swagger.config';
+import { createDocsAuthMiddleware } from './docs/docs-auth.middleware';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
+  const publicPath = join(process.cwd(), 'public');
 
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          scriptSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'"],
+        },
+      },
+    }),
+  );
+  app.use(cookieParser());
+  app.useStaticAssets(publicPath);
+
   app.enableCors({
     origin: configService.get<string[]>('cors.origins') ?? ['*'],
     credentials: true,
@@ -27,10 +49,15 @@ async function bootstrap(): Promise<void> {
   app.useGlobalFilters(new AllExceptionsFilter(), new PrismaExceptionFilter());
   app.useGlobalInterceptors(new LoggingInterceptor(), new TransformInterceptor());
 
+  const jwtSecret = configService.getOrThrow<string>('jwt.secret');
+  app.use(createDocsAuthMiddleware(jwtSecret, publicPath));
+
   const swaggerConfig = buildSwaggerDocument();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    include: [AppModule, AuthModule, UsersModule],
     operationIdFactory: (_controllerKey, methodKey) => methodKey,
   });
+
   SwaggerModule.setup('docs', app, document, {
     swaggerOptions: {
       persistAuthorization: true,
@@ -39,12 +66,18 @@ async function bootstrap(): Promise<void> {
       docExpansion: 'list',
     },
     customSiteTitle: 'VAYRIX API ? Documentation',
+    customfavIcon: '/assets/vayrix-logo.png',
+    customCss: `
+      .swagger-ui .topbar { display: none; }
+      .swagger-ui .info .title { font-weight: 700; }
+    `,
+    customJs: '/swagger-custom.js',
   });
 
   const port = configService.get<number>('port') ?? 3000;
   await app.listen(port);
   logger.log(`VAYRIX API démarrée sur le port ${port}`);
-  logger.log(`Swagger disponible sur http://localhost:${port}/docs`);
+  logger.log(`Documentation : http://localhost:${port}`);
 }
 
 bootstrap();

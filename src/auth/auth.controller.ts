@@ -10,6 +10,7 @@ import {
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExcludeEndpoint,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -100,6 +101,7 @@ export class AuthController {
   }
 
   @Public()
+  @ApiExcludeEndpoint()
   @Post('login/otp/request')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -114,6 +116,7 @@ export class AuthController {
   }
 
   @Public()
+  @ApiExcludeEndpoint()
   @Post('login/otp/verify')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({

@@ -8,11 +8,13 @@ const prisma = new PrismaClient({
 });
 
 const DEFAULT_PASSWORD = 'Password123!';
+const NENGUE_PASSWORD = 'admin123';
 
 async function main(): Promise<void> {
-  console.log('Demarrage du seed VAYRIX (admin, client, chauffeur)...');
+  console.log('Demarrage du seed VAYRIX (admin, client, chauffeur, nengue)...');
 
   const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, 12);
+  const hashedNenguePassword = await bcrypt.hash(NENGUE_PASSWORD, 12);
 
   // ---------------------------------------------------------------------------
   // ROLE
@@ -69,6 +71,19 @@ async function main(): Promise<void> {
     },
   });
 
+  const utilisateurNengue = await prisma.utilisateur.create({
+    data: {
+      nom: 'Nengue',
+      prenom: 'Admin',
+      telephone: '+237697573894',
+      email: 'nengue382@gmail.com',
+      motDePasse: hashedNenguePassword,
+      photo: 'storage/photos/admin-nengue.jpg',
+      langue: 'fr',
+      derniereConnexion: new Date(),
+    },
+  });
+
   // ---------------------------------------------------------------------------
   // UTILISATEUR_ROLE
   // ---------------------------------------------------------------------------
@@ -77,6 +92,7 @@ async function main(): Promise<void> {
       { utilisateurId: utilisateurAdmin.id, roleId: roleAdmin.id },
       { utilisateurId: utilisateurClient.id, roleId: roleClient.id },
       { utilisateurId: utilisateurChauffeur.id, roleId: roleChauffeur.id },
+      { utilisateurId: utilisateurNengue.id, roleId: roleAdmin.id },
     ],
   });
 
@@ -105,6 +121,13 @@ async function main(): Promise<void> {
   await prisma.administrateur.create({
     data: {
       utilisateurId: utilisateurAdmin.id,
+      niveau: 'SUPER_ADMIN',
+    },
+  });
+
+  await prisma.administrateur.create({
+    data: {
+      utilisateurId: utilisateurNengue.id,
       niveau: 'SUPER_ADMIN',
     },
   });
@@ -438,6 +461,7 @@ async function main(): Promise<void> {
   console.log(`  Admin     : admin@vayrix.com`);
   console.log(`  Client    : client@vayrix.com`);
   console.log(`  Chauffeur : chauffeur@vayrix.com`);
+  console.log(`  Nengue    : nengue382@gmail.com (+237697573894) — mot de passe : admin123`);
   console.log('');
   console.log('28 tables peuplees avec donnees de demonstration.');
 }
