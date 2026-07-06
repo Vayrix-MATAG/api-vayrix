@@ -64,6 +64,33 @@ async function bootstrap() {
         customCss: `
       .swagger-ui .topbar { display: none; }
       .swagger-ui .info .title { font-weight: 700; }
+      #vayrix-logout-btn {
+        position: fixed;
+        top: 16px;
+        right: 20px;
+        z-index: 9999;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        color: #fff;
+        font-family: system-ui, -apple-system, sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+        transition: transform 0.15s, box-shadow 0.2s;
+      }
+      #vayrix-logout-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 24px rgba(124, 58, 237, 0.4);
+      }
+      #vayrix-logout-btn svg {
+        flex-shrink: 0;
+      }
     `,
         customJs: '/swagger-custom.js',
     });
