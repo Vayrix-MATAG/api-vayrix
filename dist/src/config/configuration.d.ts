@@ -10,9 +10,9 @@ declare const _default: () => {
         poolMax: number;
     };
     jwt: {
-        secret: string;
+        secret: string | undefined;
         expiresIn: string;
-        refreshSecret: string;
+        refreshSecret: string | undefined;
         refreshExpiresIn: string;
     };
     mail: {
@@ -58,6 +58,11 @@ declare const _default: () => {
         baseFare: number;
         perKmRate: number;
         perMinRate: number;
+    };
+    swagger: {
+        title: string;
+        description: string;
+        version: string;
     };
 };
 export default _default;

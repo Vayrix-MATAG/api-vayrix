@@ -19,6 +19,7 @@ const common_module_1 = require("./common/common.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const role_module_1 = require("./modules/role/role.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -35,6 +36,7 @@ exports.AppModule = AppModule = __decorate([
             prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
+            role_module_1.RoleModule,
         ],
         controllers: [app_controller_1.AppController],
     })

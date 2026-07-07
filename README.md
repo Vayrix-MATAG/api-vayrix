@@ -99,14 +99,14 @@ flowchart TB
 
 1. **Entrée** → `ValidationPipe` (DTO) → `JwtAuthGuard` global (sauf `@Public()`)
 2. **Controller** → **Service** → **Repository** → **Prisma**
-3. **Sortie** → `TransformInterceptor` enveloppe la réponse :
+3. **Sortie** → `ApiResponseInterceptor` enveloppe automatiquement la réponse :
 
 ```json
 {
   "success": true,
-  "message": "Succès",
+  "message": "Utilisateur créé avec succès",
   "data": { ... },
-  "timestamp": "2026-07-06T20:00:00.000Z"
+  "meta": null
 }
 ```
 
@@ -115,9 +115,24 @@ flowchart TB
 - **JWT** : access token (15 min) + refresh token (7 j)
 - **Guard global** : `JwtAuthGuard` — décorateur `@Public()` pour les routes ouvertes
 - **Rôles** : `RolesGuard` + `@Roles()` (prêt, utilisé par les modules métier à venir)
+- **OTP Guard** : `OtpGuard` disponible pour les étapes sensibles
 - **Rate limiting** : `ThrottlerModule`
 - **Helmet** : en-têtes HTTP sécurisés
 - **Swagger** : protégé par connexion email + OTP (`vayrix_docs_token` cookie)
+
+### Format d'erreur global
+
+Toutes les exceptions HTTP sont uniformisées par `GlobalExceptionFilter` :
+
+```json
+{
+  "success": false,
+  "message": "Utilisateur introuvable",
+  "statusCode": 404,
+  "timestamp": "2026-07-07T08:00:00.000Z",
+  "path": "/api/v1/users/999"
+}
+```
 
 ---
 
@@ -216,7 +231,13 @@ Backend cursor/
 │   ├── app.module.ts          # Modules actifs
 │   ├── app.controller.ts      # GET /health
 │   ├── config/
-│   │   └── configuration.ts   # Mapping .env → ConfigService
+│   │   ├── app.config.ts
+│   │   ├── database.config.ts
+│   │   ├── jwt.config.ts
+│   │   ├── mail.config.ts
+│   │   ├── sms.config.ts
+│   │   ├── swagger.config.ts
+│   │   └── configuration.ts   # agrégation rétrocompatible
 │   ├── docs/
 │   │   └── docs-auth.middleware.ts  # Protection / et /docs
 │   ├── auth/
@@ -239,12 +260,19 @@ Backend cursor/
 │   ├── sms/                   # Provider mock | http
 │   ├── prisma/                # PrismaService (pool PG)
 │   ├── common/
-│   │   ├── guards/            # JwtAuthGuard, RolesGuard
-│   │   ├── decorators/        # @Public, @Roles, @CurrentUser
-│   │   ├── interceptors/      # Transform, Logging
-│   │   ├── filters/           # Exceptions, Prisma
+│   │   ├── responses/         # ApiResponseInterceptor + service + interfaces
+│   │   ├── pagination/        # DTO/Service pagination unique
+│   │   ├── exceptions/        # GlobalExceptionFilter
+│   │   ├── logger/            # LoggerService
+│   │   ├── decorators/        # @Public, @Roles, @CurrentUser, @PaginationQuery
+│   │   ├── guards/            # JwtAuthGuard, RolesGuard, OtpGuard
+│   │   ├── helpers/           # date/phone/string/password/file
+│   │   ├── constants/         # roles/status/messages/pagination/otp
+│   │   ├── types/             # jwt-payload/api-response/pagination
+│   │   ├── filters/           # PrismaExceptionFilter
+│   │   ├── interceptors/      # LoggingInterceptor
 │   │   ├── swagger/           # Config + helpers Swagger
-│   │   └── dto/               # ApiResponseDto, pagination
+│   │   └── dto/               # compatibilité ancienne structure
 │   │
 │   │  # ── Modules métier (présents, non activés) ──
 │   ├── drivers/
@@ -373,6 +401,60 @@ docker stack deploy -c docker-stack.yml vayrix
 ```
 
 > Le développement local utilise **uniquement** `.env` à la racine.
+
+---
+
+## Règles obligatoires pour les prochains modules (Agent / Dev)
+
+Ces règles sont **obligatoires** pour tout nouveau module métier (`Role`, `Client`, `Chauffeur`, `Véhicule`, `Course`, etc.).
+
+### Architecture imposée
+
+Chaque module doit respecter exactement cette arborescence :
+
+```txt
+module/
+  controller/
+  service/
+  dto/
+  entities/
+  repository/
+  interfaces/
+  mappers/
+  validators/
+```
+
+### Flux technique obligatoire
+
+`Controller -> Service -> Repository (Prisma) -> Database`
+
+- Aucune logique Prisma dans les controllers
+- Aucune logique métier dans les repositories
+- Les validations spécifiques vont dans `validators/`
+- Les transformations de modèle vont dans `mappers/`
+
+### Standards communs à réutiliser
+
+- Réponse API : `src/common/responses/api-response.interceptor.ts`
+- Pagination : `src/common/pagination/pagination.service.ts`
+- Erreurs globales : `src/common/exceptions/global-exception.filter.ts`
+- Logger : `src/common/logger/logger.service.ts`
+- Décorateurs : `@CurrentUser()`, `@Public()`, `@Roles()`, `@PaginationQuery()`
+- Guards : `JwtAuthGuard`, `RolesGuard`, `OtpGuard`
+- Constantes : `src/common/constants/*`
+- Helpers : `src/common/helpers/*`
+- Types : `src/common/types/*`
+- Config : `src/config/*.config.ts` (aucune valeur en dur)
+
+### Swagger obligatoire
+
+Pour chaque endpoint :
+
+- `@ApiTags()` au niveau controller
+- `@ApiOperation()` sur chaque route
+- `@ApiResponse()` documenté
+- `@ApiBearerAuth('JWT')` sur les routes protégées
+- DTO/Entities entièrement annotés avec `@ApiProperty()`
 
 ---
 

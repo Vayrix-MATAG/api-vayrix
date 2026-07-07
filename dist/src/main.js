@@ -13,17 +13,25 @@ const helmet_1 = __importDefault(require("helmet"));
 const app_module_1 = require("./app.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
-const all_exceptions_filter_1 = require("./common/filters/all-exceptions.filter");
+const role_module_1 = require("./modules/role/role.module");
 const prisma_exception_filter_1 = require("./common/filters/prisma-exception.filter");
 const logging_interceptor_1 = require("./common/interceptors/logging.interceptor");
-const transform_interceptor_1 = require("./common/interceptors/transform.interceptor");
 const swagger_config_1 = require("./common/swagger/swagger.config");
 const docs_auth_middleware_1 = require("./docs/docs-auth.middleware");
+const global_exception_filter_1 = require("./common/exceptions/global-exception.filter");
+const logger_service_1 = require("./common/logger/logger.service");
+const api_response_interceptor_1 = require("./common/responses/api-response.interceptor");
+const api_response_service_1 = require("./common/responses/api-response.service");
+const prisma_service_1 = require("./prisma/prisma.service");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule, { bufferLogs: true });
     const configService = app.get(config_1.ConfigService);
     const logger = new common_1.Logger('Bootstrap');
+    const appLogger = app.get(logger_service_1.LoggerService);
+    const apiResponseService = app.get(api_response_service_1.ApiResponseService);
+    const prismaService = app.get(prisma_service_1.PrismaService);
     const publicPath = (0, path_1.join)(process.cwd(), 'public');
+    await prismaService.enableShutdownHooks();
     app.use((0, helmet_1.default)({
         contentSecurityPolicy: {
             directives: {
@@ -43,13 +51,13 @@ async function bootstrap() {
     });
     app.setGlobalPrefix(configService.get('apiPrefix') ?? 'api/v1');
     app.useGlobalPipes(new common_1.ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }));
-    app.useGlobalFilters(new all_exceptions_filter_1.AllExceptionsFilter(), new prisma_exception_filter_1.PrismaExceptionFilter());
-    app.useGlobalInterceptors(new logging_interceptor_1.LoggingInterceptor(), new transform_interceptor_1.TransformInterceptor());
+    app.useGlobalFilters(new prisma_exception_filter_1.PrismaExceptionFilter(appLogger), new global_exception_filter_1.GlobalExceptionFilter(appLogger));
+    app.useGlobalInterceptors(new logging_interceptor_1.LoggingInterceptor(), new api_response_interceptor_1.ApiResponseInterceptor(apiResponseService));
     const jwtSecret = configService.getOrThrow('jwt.secret');
     app.use((0, docs_auth_middleware_1.createDocsAuthMiddleware)(jwtSecret, publicPath));
     const swaggerConfig = (0, swagger_config_1.buildSwaggerDocument)();
     const document = swagger_1.SwaggerModule.createDocument(app, swaggerConfig, {
-        include: [app_module_1.AppModule, auth_module_1.AuthModule, users_module_1.UsersModule],
+        include: [app_module_1.AppModule, auth_module_1.AuthModule, users_module_1.UsersModule, role_module_1.RoleModule],
         operationIdFactory: (_controllerKey, methodKey) => methodKey,
     });
     swagger_1.SwaggerModule.setup('docs', app, document, {
@@ -94,7 +102,7 @@ async function bootstrap() {
     `,
         customJs: '/swagger-custom.js',
     });
-    const port = configService.get('port') ?? 3000;
+    const port = configService.getOrThrow('port');
     await app.listen(port);
     logger.log(`VAYRIX API d�marr�e sur le port ${port}`);
     logger.log(`Documentation : http://localhost:${port}`);

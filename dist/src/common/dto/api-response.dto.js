@@ -15,11 +15,15 @@ class ApiResponseDto {
     success;
     message;
     data;
+    meta;
+    errors;
     timestamp;
-    constructor(data, message = 'Succès', success = true) {
+    constructor(data, message = 'Succès', success = true, meta = null) {
         this.success = success;
         this.message = message;
         this.data = data;
+        this.meta = meta;
+        this.errors = success ? undefined : [];
         this.timestamp = new Date().toISOString();
     }
 }
@@ -32,6 +36,18 @@ __decorate([
     (0, swagger_1.ApiProperty)({ example: 'Succès' }),
     __metadata("design:type", String)
 ], ApiResponseDto.prototype, "message", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false }),
+    __metadata("design:type", Object)
+], ApiResponseDto.prototype, "data", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, nullable: true, example: null }),
+    __metadata("design:type", Object)
+], ApiResponseDto.prototype, "meta", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ required: false, type: [Object], example: [] }),
+    __metadata("design:type", Array)
+], ApiResponseDto.prototype, "errors", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: '2026-07-06T19:00:00.000Z' }),
     __metadata("design:type", String)

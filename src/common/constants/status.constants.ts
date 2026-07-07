@@ -1,0 +1,6 @@
+export const COMMON_STATUS = {
+  ACTIVE: 'ACTIF',
+  INACTIVE: 'INACTIF',
+  PENDING: 'EN_ATTENTE',
+  BLOCKED: 'BLOQUE',
+} as const;

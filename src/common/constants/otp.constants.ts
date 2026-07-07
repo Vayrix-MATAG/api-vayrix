@@ -1,0 +1,6 @@
+export const OTP_STATUS = {
+  VALID: 'VALID',
+  EXPIRED: 'EXPIRED',
+  INVALID: 'INVALID',
+  ATTEMPTS_EXCEEDED: 'ATTEMPTS_EXCEEDED',
+} as const;

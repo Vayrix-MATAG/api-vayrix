@@ -1,20 +1,22 @@
 import {
   ArgumentsHost,
   Catch,
-  ConflictException,
   ExceptionFilter,
   HttpStatus,
-  NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '../../../generated/prisma/client';
-import { Response } from 'express';
+import { Request, Response } from 'express';
+import { LoggerService } from '../logger/logger.service';
 
 /** Traduit les erreurs Prisma en exceptions HTTP compréhensibles */
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
+  constructor(private readonly logger: LoggerService) {}
+
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
 
     let status = HttpStatus.BAD_REQUEST;
     let message = 'Erreur de base de données';
@@ -36,11 +38,15 @@ export class PrismaExceptionFilter implements ExceptionFilter {
         break;
     }
 
+    this.logger.warn(
+      `[${exception.code}] ${request.method} ${request.url} -> ${message}`,
+    );
+
     response.status(status).json({
       success: false,
       statusCode: status,
       message,
-      code: exception.code,
+      path: request.url,
       timestamp: new Date().toISOString(),
     });
   }

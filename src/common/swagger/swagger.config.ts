@@ -46,5 +46,6 @@ Toutes les réponses sont enveloppées :
     .addTag('Health', 'Santé de l\'API')
     .addTag('Auth', 'Inscription, connexion, OTP, session JWT')
     .addTag('Users', 'Gestion du profil utilisateur')
+    .addTag('Roles', 'Gestion des rôles applicatifs (ADMIN uniquement)')
     .build();
 }

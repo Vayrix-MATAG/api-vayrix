@@ -1,6 +1,3 @@
-export declare class PaginationQueryDto {
-    page?: number;
-    limit?: number;
-    sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
+import { PaginationDto } from '../pagination/pagination.dto';
+export declare class PaginationQueryDto extends PaginationDto {
 }

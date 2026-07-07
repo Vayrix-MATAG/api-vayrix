@@ -1,9 +1,11 @@
 export declare class ApiResponseDto<T = unknown> {
     success: boolean;
     message: string;
-    data: T;
+    data?: T;
+    meta?: unknown | null;
+    errors?: unknown[];
     timestamp: string;
-    constructor(data: T, message?: string, success?: boolean);
+    constructor(data: T, message?: string, success?: boolean, meta?: unknown | null);
 }
 export declare class ApiErrorResponseDto {
     success: boolean;

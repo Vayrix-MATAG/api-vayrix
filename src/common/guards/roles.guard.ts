@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AppRole } from '../constants/roles.constant';
+import { AppRole } from '../constants/roles.constants';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 
@@ -28,12 +28,16 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     if (!user?.roles?.length) {
-      throw new ForbiddenException('Accès refusé : rôle insuffisant');
+      throw new ForbiddenException(
+        'Accès refusé : rôle ADMIN ou SUPER_ADMIN requis',
+      );
     }
 
     const hasRole = requiredRoles.some((role) => user.roles.includes(role));
     if (!hasRole) {
-      throw new ForbiddenException('Accès refusé : rôle insuffisant');
+      throw new ForbiddenException(
+        'Accès refusé : rôle ADMIN ou SUPER_ADMIN requis',
+      );
     }
 
     return true;

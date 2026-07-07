@@ -9,18 +9,26 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { RoleModule } from './modules/role/role.module';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
-import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { buildSwaggerDocument } from './common/swagger/swagger.config';
 import { createDocsAuthMiddleware } from './docs/docs-auth.middleware';
+import { GlobalExceptionFilter } from './common/exceptions/global-exception.filter';
+import { LoggerService } from './common/logger/logger.service';
+import { ApiResponseInterceptor } from './common/responses/api-response.interceptor';
+import { ApiResponseService } from './common/responses/api-response.service';
+import { PrismaService } from './prisma/prisma.service';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, { bufferLogs: true });
   const configService = app.get(ConfigService);
   const logger = new Logger('Bootstrap');
+  const appLogger = app.get(LoggerService);
+  const apiResponseService = app.get(ApiResponseService);
+  const prismaService = app.get(PrismaService);
   const publicPath = join(process.cwd(), 'public');
+  await prismaService.enableShutdownHooks();
 
   app.use(
     helmet({
@@ -46,15 +54,21 @@ async function bootstrap(): Promise<void> {
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }),
   );
-  app.useGlobalFilters(new AllExceptionsFilter(), new PrismaExceptionFilter());
-  app.useGlobalInterceptors(new LoggingInterceptor(), new TransformInterceptor());
+  app.useGlobalFilters(
+    new PrismaExceptionFilter(appLogger),
+    new GlobalExceptionFilter(appLogger),
+  );
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new ApiResponseInterceptor(apiResponseService),
+  );
 
   const jwtSecret = configService.getOrThrow<string>('jwt.secret');
   app.use(createDocsAuthMiddleware(jwtSecret, publicPath));
 
   const swaggerConfig = buildSwaggerDocument();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
-    include: [AppModule, AuthModule, UsersModule],
+    include: [AppModule, AuthModule, UsersModule, RoleModule],
     operationIdFactory: (_controllerKey, methodKey) => methodKey,
   });
 
@@ -101,7 +115,7 @@ async function bootstrap(): Promise<void> {
     customJs: '/swagger-custom.js',
   });
 
-  const port = configService.get<number>('port') ?? 3000;
+  const port = configService.getOrThrow<number>('port');
   await app.listen(port);
   logger.log(`VAYRIX API démarrée sur le port ${port}`);
   logger.log(`Documentation : http://localhost:${port}`);

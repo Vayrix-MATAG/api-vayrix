@@ -46,15 +46,21 @@ async function main() {
     console.log('Demarrage du seed VAYRIX (admin, client, chauffeur, nengue)...');
     const hashedPassword = await bcrypt.hash(DEFAULT_PASSWORD, 12);
     const hashedNenguePassword = await bcrypt.hash(NENGUE_PASSWORD, 12);
-    const roleAdmin = await prisma.role.create({
-        data: { nom: 'ADMIN', description: 'Administrateur systeme VAYRIX' },
-    });
-    const roleClient = await prisma.role.create({
-        data: { nom: 'CLIENT', description: 'Client passager VAYRIX' },
-    });
-    const roleChauffeur = await prisma.role.create({
-        data: { nom: 'CHAUFFEUR', description: 'Chauffeur partenaire VAYRIX' },
-    });
+    const baseRoles = [
+        { nom: 'ADMIN', description: 'Administrateur système VAYRIX' },
+        { nom: 'CLIENT', description: 'Client passager VAYRIX' },
+        { nom: 'CHAUFFEUR', description: 'Chauffeur partenaire VAYRIX' },
+        { nom: 'SUPER_ADMIN', description: 'Super administrateur VAYRIX' },
+    ];
+    const seededRoles = await Promise.all(baseRoles.map((role) => prisma.role.upsert({
+        where: { nom: role.nom },
+        update: { description: role.description },
+        create: role,
+    })));
+    const roleByName = Object.fromEntries(seededRoles.map((role) => [role.nom, role]));
+    const roleAdmin = roleByName.ADMIN;
+    const roleClient = roleByName.CLIENT;
+    const roleChauffeur = roleByName.CHAUFFEUR;
     const utilisateurAdmin = await prisma.utilisateur.create({
         data: {
             nom: 'Sarr',
@@ -103,12 +109,14 @@ async function main() {
             derniereConnexion: new Date(),
         },
     });
+    const roleSuperAdmin = roleByName.SUPER_ADMIN;
     await prisma.utilisateurRole.createMany({
         data: [
             { utilisateurId: utilisateurAdmin.id, roleId: roleAdmin.id },
             { utilisateurId: utilisateurClient.id, roleId: roleClient.id },
             { utilisateurId: utilisateurChauffeur.id, roleId: roleChauffeur.id },
             { utilisateurId: utilisateurNengue.id, roleId: roleAdmin.id },
+            { utilisateurId: utilisateurNengue.id, roleId: roleSuperAdmin.id },
         ],
     });
     const client = await prisma.client.create({
@@ -397,6 +405,8 @@ async function main() {
     console.log('');
     console.log('Seed VAYRIX termine avec succes.');
     console.log('-------------------------------------------');
+    console.log('Roles de base : ADMIN, CLIENT, CHAUFFEUR, SUPER_ADMIN');
+    console.log('');
     console.log('Comptes fictifs :');
     console.log(`  Admin     : admin@vayrix.com`);
     console.log(`  Client    : client@vayrix.com`);

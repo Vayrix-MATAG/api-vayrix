@@ -8,14 +8,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CommonModule = void 0;
 const common_1 = require("@nestjs/common");
+const api_response_service_1 = require("./responses/api-response.service");
+const pagination_service_1 = require("./pagination/pagination.service");
+const logger_service_1 = require("./logger/logger.service");
 let CommonModule = class CommonModule {
 };
 exports.CommonModule = CommonModule;
 exports.CommonModule = CommonModule = __decorate([
     (0, common_1.Global)(),
     (0, common_1.Module)({
-        providers: [],
-        exports: [],
+        providers: [api_response_service_1.ApiResponseService, pagination_service_1.PaginationService, logger_service_1.LoggerService],
+        exports: [api_response_service_1.ApiResponseService, pagination_service_1.PaginationService, logger_service_1.LoggerService],
     })
 ], CommonModule);
 //# sourceMappingURL=common.module.js.map

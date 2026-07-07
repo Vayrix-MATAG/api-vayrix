@@ -17,17 +17,29 @@ async function main(): Promise<void> {
   const hashedNenguePassword = await bcrypt.hash(NENGUE_PASSWORD, 12);
 
   // ---------------------------------------------------------------------------
-  // ROLE
+  // ROLE (rôles de base)
   // ---------------------------------------------------------------------------
-  const roleAdmin = await prisma.role.create({
-    data: { nom: 'ADMIN', description: 'Administrateur systeme VAYRIX' },
-  });
-  const roleClient = await prisma.role.create({
-    data: { nom: 'CLIENT', description: 'Client passager VAYRIX' },
-  });
-  const roleChauffeur = await prisma.role.create({
-    data: { nom: 'CHAUFFEUR', description: 'Chauffeur partenaire VAYRIX' },
-  });
+  const baseRoles = [
+    { nom: 'ADMIN', description: 'Administrateur système VAYRIX' },
+    { nom: 'CLIENT', description: 'Client passager VAYRIX' },
+    { nom: 'CHAUFFEUR', description: 'Chauffeur partenaire VAYRIX' },
+    { nom: 'SUPER_ADMIN', description: 'Super administrateur VAYRIX' },
+  ] as const;
+
+  const seededRoles = await Promise.all(
+    baseRoles.map((role) =>
+      prisma.role.upsert({
+        where: { nom: role.nom },
+        update: { description: role.description },
+        create: role,
+      }),
+    ),
+  );
+
+  const roleByName = Object.fromEntries(seededRoles.map((role) => [role.nom, role]));
+  const roleAdmin = roleByName.ADMIN;
+  const roleClient = roleByName.CLIENT;
+  const roleChauffeur = roleByName.CHAUFFEUR;
 
   // ---------------------------------------------------------------------------
   // UTILISATEUR (3 comptes : admin, client, chauffeur)
@@ -84,6 +96,8 @@ async function main(): Promise<void> {
     },
   });
 
+  const roleSuperAdmin = roleByName.SUPER_ADMIN;
+
   // ---------------------------------------------------------------------------
   // UTILISATEUR_ROLE
   // ---------------------------------------------------------------------------
@@ -93,6 +107,7 @@ async function main(): Promise<void> {
       { utilisateurId: utilisateurClient.id, roleId: roleClient.id },
       { utilisateurId: utilisateurChauffeur.id, roleId: roleChauffeur.id },
       { utilisateurId: utilisateurNengue.id, roleId: roleAdmin.id },
+      { utilisateurId: utilisateurNengue.id, roleId: roleSuperAdmin.id },
     ],
   });
 
@@ -457,6 +472,8 @@ async function main(): Promise<void> {
   console.log('');
   console.log('Seed VAYRIX termine avec succes.');
   console.log('-------------------------------------------');
+  console.log('Roles de base : ADMIN, CLIENT, CHAUFFEUR, SUPER_ADMIN');
+  console.log('');
   console.log('Comptes fictifs :');
   console.log(`  Admin     : admin@vayrix.com`);
   console.log(`  Client    : client@vayrix.com`);

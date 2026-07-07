@@ -1,8 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = require("dotenv");
+const path_1 = require("path");
+(0, dotenv_1.config)({ path: (0, path_1.resolve)(process.cwd(), '.env'), override: true });
+function parseHttpPort() {
+    const raw = process.env.PORT?.trim();
+    if (!raw) {
+        throw new Error('PORT est obligatoire dans le fichier .env');
+    }
+    const port = Number.parseInt(raw, 10);
+    if (Number.isNaN(port) || port < 1 || port > 65535) {
+        throw new Error(`PORT invalide dans .env : "${raw}"`);
+    }
+    return port;
+}
 exports.default = () => ({
     nodeEnv: process.env.NODE_ENV ?? 'development',
-    port: parseInt(process.env.PORT ?? '3000', 10),
+    port: parseHttpPort(),
     apiPrefix: process.env.API_PREFIX ?? 'api/v1',
     app: {
         frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:3000',
@@ -12,9 +26,9 @@ exports.default = () => ({
         poolMax: parseInt(process.env.DATABASE_POOL_MAX ?? '10', 10),
     },
     jwt: {
-        secret: process.env.JWT_SECRET ?? 'dev-secret',
+        secret: process.env.JWT_SECRET,
         expiresIn: process.env.JWT_EXPIRES_IN ?? '15m',
-        refreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret',
+        refreshSecret: process.env.JWT_REFRESH_SECRET,
         refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
     },
     mail: {
@@ -60,6 +74,12 @@ exports.default = () => ({
         baseFare: parseFloat(process.env.BASE_FARE ?? '500'),
         perKmRate: parseFloat(process.env.PER_KM_RATE ?? '250'),
         perMinRate: parseFloat(process.env.PER_MIN_RATE ?? '50'),
+    },
+    swagger: {
+        title: process.env.SWAGGER_TITLE ?? 'VAYRIX API',
+        description: process.env.SWAGGER_DESCRIPTION ??
+            'Documentation professionnelle de l’API VAYRIX',
+        version: process.env.SWAGGER_VERSION ?? '1.0.0',
     },
 });
 //# sourceMappingURL=configuration.js.map

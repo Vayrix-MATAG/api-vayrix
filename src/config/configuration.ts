@@ -1,6 +1,29 @@
+import { config as loadEnv } from 'dotenv';
+import { resolve } from 'path';
+
+loadEnv({ path: resolve(process.cwd(), '.env'), override: true });
+
+/**
+ * Configuration agrégée (format plat + namespaces).
+ * Source unique pour ConfigService : port, database.url, jwt.secret, mail.*, etc.
+ */
+function parseHttpPort(): number {
+  const raw = process.env.PORT?.trim();
+  if (!raw) {
+    throw new Error('PORT est obligatoire dans le fichier .env');
+  }
+
+  const port = Number.parseInt(raw, 10);
+  if (Number.isNaN(port) || port < 1 || port > 65535) {
+    throw new Error(`PORT invalide dans .env : "${raw}"`);
+  }
+
+  return port;
+}
+
 export default () => ({
   nodeEnv: process.env.NODE_ENV ?? 'development',
-  port: parseInt(process.env.PORT ?? '3000', 10),
+  port: parseHttpPort(),
   apiPrefix: process.env.API_PREFIX ?? 'api/v1',
   app: {
     frontendUrl: process.env.FRONTEND_URL ?? 'http://localhost:3000',
@@ -10,9 +33,9 @@ export default () => ({
     poolMax: parseInt(process.env.DATABASE_POOL_MAX ?? '10', 10),
   },
   jwt: {
-    secret: process.env.JWT_SECRET ?? 'dev-secret',
+    secret: process.env.JWT_SECRET,
     expiresIn: process.env.JWT_EXPIRES_IN ?? '15m',
-    refreshSecret: process.env.JWT_REFRESH_SECRET ?? 'dev-refresh-secret',
+    refreshSecret: process.env.JWT_REFRESH_SECRET,
     refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN ?? '7d',
   },
   mail: {
@@ -27,11 +50,13 @@ export default () => ({
   },
   otp: {
     expiryMinutes: parseInt(process.env.OTP_EXPIRY_MINUTES ?? '5', 10),
-    resendCooldownSeconds: parseInt(process.env.OTP_RESEND_COOLDOWN_SECONDS ?? '60', 10),
+    resendCooldownSeconds: parseInt(
+      process.env.OTP_RESEND_COOLDOWN_SECONDS ?? '60',
+      10,
+    ),
     maxAttempts: parseInt(process.env.OTP_MAX_ATTEMPTS ?? '5', 10),
   },
   sms: {
-    /** mock = log console (dev) | http = API REST externe (prod) */
     provider: (process.env.SMS_PROVIDER ?? 'mock') as 'mock' | 'http',
     apiUrl: process.env.SMS_API_URL,
     apiKey: process.env.SMS_API_KEY,
@@ -59,5 +84,12 @@ export default () => ({
     baseFare: parseFloat(process.env.BASE_FARE ?? '500'),
     perKmRate: parseFloat(process.env.PER_KM_RATE ?? '250'),
     perMinRate: parseFloat(process.env.PER_MIN_RATE ?? '50'),
+  },
+  swagger: {
+    title: process.env.SWAGGER_TITLE ?? 'VAYRIX API',
+    description:
+      process.env.SWAGGER_DESCRIPTION ??
+      'Documentation professionnelle de l’API VAYRIX',
+    version: process.env.SWAGGER_VERSION ?? '1.0.0',
   },
 });

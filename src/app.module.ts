@@ -7,6 +7,7 @@ import { CommonModule } from './common/common.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { RoleModule } from './modules/role/role.module';
 // Modules métier désactivés temporairement — migration schéma Prisma en cours
 // import { DriversModule } from './drivers/drivers.module';
 // import { VehiclesModule } from './vehicles/vehicles.module';
@@ -31,6 +32,7 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     AuthModule,
     UsersModule,
+    RoleModule,
   ],
   controllers: [AppController],
 })

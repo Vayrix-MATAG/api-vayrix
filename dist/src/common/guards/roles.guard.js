@@ -29,11 +29,11 @@ let RolesGuard = class RolesGuard {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
         if (!user?.roles?.length) {
-            throw new common_1.ForbiddenException('Accès refusé : rôle insuffisant');
+            throw new common_1.ForbiddenException('Accès refusé : rôle ADMIN ou SUPER_ADMIN requis');
         }
         const hasRole = requiredRoles.some((role) => user.roles.includes(role));
         if (!hasRole) {
-            throw new common_1.ForbiddenException('Accès refusé : rôle insuffisant');
+            throw new common_1.ForbiddenException('Accès refusé : rôle ADMIN ou SUPER_ADMIN requis');
         }
         return true;
     }

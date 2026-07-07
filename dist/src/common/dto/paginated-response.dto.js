@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaginatedResponseDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 class PaginatedResponseDto {
+    items;
+    meta;
     data;
     total;
     page;
@@ -21,6 +23,15 @@ class PaginatedResponseDto {
     hasPreviousPage;
     constructor(data, total, page, limit) {
         const totalPages = Math.ceil(total / limit) || 1;
+        this.items = data;
+        this.meta = {
+            page,
+            limit,
+            totalItems: total,
+            totalPages,
+            hasNext: page < totalPages,
+            hasPrevious: page > 1,
+        };
         this.data = data;
         this.total = total;
         this.page = page;
@@ -33,6 +44,23 @@ class PaginatedResponseDto {
 exports.PaginatedResponseDto = PaginatedResponseDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ isArray: true }),
+    __metadata("design:type", Array)
+], PaginatedResponseDto.prototype, "items", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        example: {
+            page: 1,
+            limit: 10,
+            totalItems: 150,
+            totalPages: 15,
+            hasNext: true,
+            hasPrevious: false,
+        },
+    }),
+    __metadata("design:type", Object)
+], PaginatedResponseDto.prototype, "meta", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Array)
 ], PaginatedResponseDto.prototype, "data", void 0);
 __decorate([
