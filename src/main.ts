@@ -31,14 +31,36 @@ async function bootstrap(): Promise<void> {
   await prismaService.enableShutdownHooks();
 
   app.use(
-    helmet({
+  helmet({
+    hsts: false,
       contentSecurityPolicy: {
         directives: {
           defaultSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          scriptSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", 'data:', 'https:'],
-          connectSrc: ["'self'"],
+  
+          styleSrc: [
+            "'self'",
+            "'unsafe-inline'",
+          ],
+  
+          scriptSrc: [
+            "'self'",
+            "'unsafe-inline'",
+          ],
+  
+          imgSrc: [
+            "'self'",
+            "data:",
+            "http:",
+            "https:",
+          ],
+  
+          connectSrc: [
+            "'self'",
+            "http:",
+            "https:",
+          ],
+  
+          upgradeInsecureRequests: null,
         },
       },
     }),
@@ -117,7 +139,7 @@ async function bootstrap(): Promise<void> {
 
   const port = configService.getOrThrow<number>('port');
   await app.listen(port);
-  logger.log(`VAYRIX API démarrée sur le port ${port}`);
+  logger.log(`VAYRIX API dÃ©marrÃ©e sur le port ${port}`);
   logger.log(`Documentation : http://localhost:${port}`);
 }
 
