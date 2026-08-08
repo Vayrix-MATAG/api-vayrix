@@ -42,6 +42,42 @@ let RidesService = RidesService_1 = class RidesService {
         this.stateMachine = stateMachine;
         this.driverMatchingService = driverMatchingService;
     }
+    async findAll(query) {
+        const { statut, typeCourse, page = 1, limit = 10 } = query;
+        const where = {};
+        if (statut)
+            where.statut = statut;
+        if (typeCourse)
+            where.typeCourse = typeCourse;
+        const [data, total] = await Promise.all([
+            this.prisma.course.findMany({
+                where,
+                include: {
+                    chauffeur: {
+                        include: {
+                            utilisateur: {
+                                select: {
+                                    id: true,
+                                    nom: true,
+                                    prenom: true,
+                                    telephone: true,
+                                },
+                            },
+                        },
+                    },
+                    vehicule: true,
+                },
+                skip: (page - 1) * limit,
+                take: limit,
+                orderBy: { dateCreation: 'desc' },
+            }),
+            this.prisma.course.count({ where }),
+        ]);
+        return {
+            data: data.map((course) => rides_mapper_1.RidesMapper.toRideEntity(course)),
+            total,
+        };
+    }
     async estimateFare(dto) {
         const { latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee, typeVehiculeId } = dto;
         const distanceResult = this.distanceService.calculateDistance(latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee);
@@ -54,11 +90,34 @@ let RidesService = RidesService_1 = class RidesService {
         if (!utilisateur) {
             throw new common_1.NotFoundException('Utilisateur introuvable');
         }
-        const client = await this.prisma.client.findUnique({
-            where: { utilisateurId },
+        const utilisateurWithRoles = await this.prisma.utilisateur.findUnique({
+            where: { id: utilisateurId },
+            include: { utilisateurRoles: { include: { role: true } } },
         });
-        if (!client) {
-            throw new common_1.ForbiddenException('Seuls les clients peuvent créer des courses');
+        const userRoles = utilisateurWithRoles?.utilisateurRoles.map(ur => ur.role.nom) || [];
+        const isSuperAdmin = userRoles.includes('SUPER_ADMIN');
+        let client;
+        if (isSuperAdmin) {
+            client = await this.prisma.client.findUnique({
+                where: { utilisateurId },
+            });
+            if (!client) {
+                this.logger.log(`Création automatique du profil client pour SUPER_ADMIN ${utilisateurId}`);
+                client = await this.prisma.client.create({
+                    data: {
+                        utilisateurId,
+                        statut: 'ACTIF',
+                    },
+                });
+            }
+        }
+        else {
+            client = await this.prisma.client.findUnique({
+                where: { utilisateurId },
+            });
+            if (!client) {
+                throw new common_1.ForbiddenException('Seuls les clients peuvent créer des courses');
+            }
         }
         const distanceResult = this.distanceService.calculateDistance(latitudeDepart, longitudeDepart, latitudeArrivee, longitudeArrivee);
         const tarificationResult = await this.tarificationService.calculerTarif(BigInt(typeVehiculeId), distanceResult.distanceKm);

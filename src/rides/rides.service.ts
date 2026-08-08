@@ -49,6 +49,47 @@ export class RidesService {
   ) {}
 
   /**
+   * Lister toutes les courses (ADMIN/SUPER_ADMIN)
+   */
+  async findAll(query: RidesQueryDto): Promise<{ data: RideEntity[]; total: number }> {
+    const { statut, typeCourse, page = 1, limit = 10 } = query;
+
+    const where: any = {};
+    if (statut) where.statut = statut;
+    if (typeCourse) where.typeCourse = typeCourse;
+
+    const [data, total] = await Promise.all([
+      this.prisma.course.findMany({
+        where,
+        include: {
+          chauffeur: {
+            include: {
+              utilisateur: {
+                select: {
+                  id: true,
+                  nom: true,
+                  prenom: true,
+                  telephone: true,
+                },
+              },
+            },
+          },
+          vehicule: true,
+        },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { dateCreation: 'desc' },
+      }),
+      this.prisma.course.count({ where }),
+    ]);
+
+    return {
+      data: data.map((course) => RidesMapper.toRideEntity(course as any)),
+      total,
+    };
+  }
+
+  /**
    * Estimer le tarif d'une course
    */
   async estimateFare(dto: EstimateRideDto): Promise<RideEstimateEntity> {
@@ -86,18 +127,49 @@ export class RidesService {
       typeCourse,
     } = dto;
 
-    // Vérifier que l'utilisateur est un client
+    // Récupérer l'utilisateur avec ses rôles
     const utilisateur = await this.usersRepository.findById(utilisateurId);
     if (!utilisateur) {
       throw new NotFoundException('Utilisateur introuvable');
     }
 
-    const client = await this.prisma.client.findUnique({
-      where: { utilisateurId },
+    // Vérifier les rôles de l'utilisateur
+    const utilisateurWithRoles = await this.prisma.utilisateur.findUnique({
+      where: { id: utilisateurId },
+      include: { utilisateurRoles: { include: { role: true } } },
     });
 
-    if (!client) {
-      throw new ForbiddenException('Seuls les clients peuvent créer des courses');
+    const userRoles = utilisateurWithRoles?.utilisateurRoles.map(ur => ur.role.nom) || [];
+
+    // SUPER_ADMIN peut créer des courses sans profil client (pour tests/admin)
+    const isSuperAdmin = userRoles.includes('SUPER_ADMIN');
+
+    let client;
+    if (isSuperAdmin) {
+      // Pour SUPER_ADMIN, on cherche quand même un profil client s'il existe
+      client = await this.prisma.client.findUnique({
+        where: { utilisateurId },
+      });
+
+      // Si SUPER_ADMIN n'a pas de profil client, en créer un automatiquement
+      if (!client) {
+        this.logger.log(`Création automatique du profil client pour SUPER_ADMIN ${utilisateurId}`);
+        client = await this.prisma.client.create({
+          data: {
+            utilisateurId,
+            statut: 'ACTIF',
+          },
+        });
+      }
+    } else {
+      // Pour les autres, le profil client est obligatoire
+      client = await this.prisma.client.findUnique({
+        where: { utilisateurId },
+      });
+
+      if (!client) {
+        throw new ForbiddenException('Seuls les clients peuvent créer des courses');
+      }
     }
 
     // Calculer la distance

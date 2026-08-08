@@ -28,6 +28,9 @@ let RidesController = class RidesController {
     constructor(ridesService) {
         this.ridesService = ridesService;
     }
+    findAll(query) {
+        return this.ridesService.findAll(query);
+    }
     estimate(dto) {
         return this.ridesService.estimateFare(dto);
     }
@@ -61,11 +64,22 @@ let RidesController = class RidesController {
 };
 exports.RidesController = RidesController;
 __decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Lister toutes les courses (ADMIN/SUPER_ADMIN)' }),
+    (0, swagger_helpers_1.ApiWrappedOkResponse)(ride_entity_1.RideEntity),
+    (0, swagger_helpers_1.ApiProtectedErrors)(),
+    (0, roles_decorator_1.Roles)('ADMIN', 'SUPER_ADMIN'),
+    __param(0, (0, common_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [rides_dto_1.RidesQueryDto]),
+    __metadata("design:returntype", void 0)
+], RidesController.prototype, "findAll", null);
+__decorate([
     (0, common_1.Post)('estimate'),
     (0, swagger_1.ApiOperation)({ summary: 'Estimer le tarif d\'une course' }),
     (0, swagger_helpers_1.ApiWrappedOkResponse)(ride_entity_1.RideEstimateEntity),
     (0, swagger_helpers_1.ApiProtectedErrors)(),
-    (0, roles_decorator_1.Roles)('CLIENT', 'ADMIN'),
+    (0, roles_decorator_1.Roles)('CLIENT', 'ADMIN', 'SUPER_ADMIN'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [rides_dto_1.EstimateRideDto]),
@@ -76,7 +90,7 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Créer une nouvelle course' }),
     (0, swagger_helpers_1.ApiWrappedOkResponse)(ride_entity_1.RideEntity),
     (0, swagger_helpers_1.ApiProtectedErrors)(),
-    (0, roles_decorator_1.Roles)('CLIENT'),
+    (0, roles_decorator_1.Roles)('CLIENT', 'SUPER_ADMIN'),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

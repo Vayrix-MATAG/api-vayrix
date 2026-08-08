@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.RolesGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
+const roles_constants_1 = require("../constants/roles.constants");
 const roles_decorator_1 = require("../decorators/roles.decorator");
 let RolesGuard = class RolesGuard {
     reflector;
@@ -29,11 +30,15 @@ let RolesGuard = class RolesGuard {
         const request = context.switchToHttp().getRequest();
         const user = request.user;
         if (!user?.roles?.length) {
-            throw new common_1.ForbiddenException('Accès refusé : rôle ADMIN ou SUPER_ADMIN requis');
+            throw new common_1.ForbiddenException('Accès refusé : authentification requise');
+        }
+        if (user.roles.includes(roles_constants_1.APP_ROLES.SUPER_ADMIN)) {
+            return true;
         }
         const hasRole = requiredRoles.some((role) => user.roles.includes(role));
         if (!hasRole) {
-            throw new common_1.ForbiddenException('Accès refusé : rôle ADMIN ou SUPER_ADMIN requis');
+            const requiredRolesStr = requiredRoles.join(', ');
+            throw new common_1.ForbiddenException(`Accès refusé : rôle(s) requis(s) : ${requiredRolesStr}`);
         }
         return true;
     }

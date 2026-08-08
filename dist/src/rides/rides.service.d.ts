@@ -19,6 +19,10 @@ export declare class RidesService {
     private readonly driverMatchingService;
     private readonly logger;
     constructor(prisma: PrismaService, usersRepository: UsersRepository, driversRepository: DriversRepository, ridesRepository: RidesRepository, tarificationService: TarificationService, distanceService: DistanceService, stateMachine: CourseStateMachine, driverMatchingService: DriverMatchingService);
+    findAll(query: RidesQueryDto): Promise<{
+        data: RideEntity[];
+        total: number;
+    }>;
     estimateFare(dto: EstimateRideDto): Promise<RideEstimateEntity>;
     create(utilisateurId: bigint, dto: CreateRideDto): Promise<RideEntity>;
     acceptRide(utilisateurId: bigint, courseId: string, dto: AcceptRideDto): Promise<RideEntity>;

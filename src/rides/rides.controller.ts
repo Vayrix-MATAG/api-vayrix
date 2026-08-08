@@ -32,11 +32,20 @@ import { RidesService } from './rides.service';
 export class RidesController {
   constructor(private readonly ridesService: RidesService) {}
 
+  @Get()
+  @ApiOperation({ summary: 'Lister toutes les courses (ADMIN/SUPER_ADMIN)' })
+  @ApiWrappedOkResponse(RideEntity)
+  @ApiProtectedErrors()
+  @Roles('ADMIN', 'SUPER_ADMIN')
+  findAll(@Query() query: RidesQueryDto) {
+    return this.ridesService.findAll(query);
+  }
+
   @Post('estimate')
   @ApiOperation({ summary: 'Estimer le tarif d\'une course' })
   @ApiWrappedOkResponse(RideEstimateEntity)
   @ApiProtectedErrors()
-  @Roles('CLIENT', 'ADMIN')
+  @Roles('CLIENT', 'ADMIN', 'SUPER_ADMIN')
   estimate(@Body() dto: EstimateRideDto) {
     return this.ridesService.estimateFare(dto);
   }
@@ -45,7 +54,7 @@ export class RidesController {
   @ApiOperation({ summary: 'Créer une nouvelle course' })
   @ApiWrappedOkResponse(RideEntity)
   @ApiProtectedErrors()
-  @Roles('CLIENT')
+  @Roles('CLIENT', 'SUPER_ADMIN')
   create(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateRideDto) {
     return this.ridesService.create(BigInt(user.id), dto);
   }

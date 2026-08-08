@@ -5,6 +5,10 @@ import { RidesService } from './rides.service';
 export declare class RidesController {
     private readonly ridesService;
     constructor(ridesService: RidesService);
+    findAll(query: RidesQueryDto): Promise<{
+        data: RideEntity[];
+        total: number;
+    }>;
     estimate(dto: EstimateRideDto): Promise<RideEstimateEntity>;
     create(user: AuthenticatedUser, dto: CreateRideDto): Promise<RideEntity>;
     findMyRides(user: AuthenticatedUser, query: RidesQueryDto): Promise<RideEntity[]>;
