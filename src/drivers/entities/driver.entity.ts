@@ -1,31 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DriverStatus } from '@prisma/client';
 
 export class DriverEntity {
   @ApiProperty()
-  id: string;
+  id: bigint;
 
   @ApiProperty()
-  userId: string;
-
-  @ApiProperty({ enum: DriverStatus })
-  status: DriverStatus;
+  utilisateurId: bigint;
 
   @ApiProperty()
-  rating: number;
+  numeroPermis: string;
 
   @ApiProperty()
-  totalRides: number;
+  estEnLigne: boolean;
 
   @ApiProperty()
-  licenseNumber: string;
+  solde: number;
 
   @ApiProperty()
-  licenseExpiry: Date;
+  statut: string;
 
   @ApiProperty()
-  isApproved: boolean;
+  motifStatut?: string;
 
   @ApiProperty()
-  createdAt: Date;
+  dateCreation: Date;
+
+  @ApiProperty()
+  dateModification: Date;
+
+  @ApiProperty()
+  utilisateur?: {
+    id: bigint;
+    nom: string;
+    prenom: string;
+    email: string;
+    telephone: string;
+    photo?: string;
+  };
 }

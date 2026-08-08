@@ -13,6 +13,7 @@ export type * from './models/DocumentVehicule.js';
 export type * from './models/Course.js';
 export type * from './models/PropositionPrix.js';
 export type * from './models/DemandePartageCourse.js';
+export type * from './models/ValidationPartageCourse.js';
 export type * from './models/ParticipantCourse.js';
 export type * from './models/Paiement.js';
 export type * from './models/PositionChauffeur.js';

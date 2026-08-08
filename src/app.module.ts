@@ -8,13 +8,13 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './modules/role/role.module';
-// Modules métier désactivés temporairement — migration schéma Prisma en cours
-// import { DriversModule } from './drivers/drivers.module';
-// import { VehiclesModule } from './vehicles/vehicles.module';
+import { DriversModule } from './drivers/drivers.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { RidesModule } from './rides/rides.module';
+// Modules métier à activer progressivement
 // import { PaymentsModule } from './payments/payments.module';
 // import { NotificationsModule } from './notifications/notifications.module';
 // import { UploadsModule } from './uploads/uploads.module';
-// import { RidesModule } from './rides/rides.module';
 // import { SosModule } from './sos/sos.module';
 // import { SharingModule } from './sharing/sharing.module';
 // import { RealtimeModule } from './realtime/realtime.module';
@@ -33,6 +33,9 @@ import { RoleModule } from './modules/role/role.module';
     AuthModule,
     UsersModule,
     RoleModule,
+    DriversModule,
+    VehiclesModule,
+    RidesModule,
   ],
   controllers: [AppController],
 })

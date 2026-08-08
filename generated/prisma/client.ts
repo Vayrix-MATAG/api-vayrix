@@ -115,6 +115,11 @@ export type PropositionPrix = Prisma.PropositionPrixModel
  */
 export type DemandePartageCourse = Prisma.DemandePartageCourseModel
 /**
+ * Model ValidationPartageCourse
+ * 
+ */
+export type ValidationPartageCourse = Prisma.ValidationPartageCourseModel
+/**
  * Model ParticipantCourse
  * 
  */

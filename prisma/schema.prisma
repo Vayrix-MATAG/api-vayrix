@@ -2,12 +2,13 @@
 // Schéma Prisma VAYRIX — traduction fidèle du diagramme Mermaid ERD validé
 // =============================================================================
 // Règles respectées :
-// - 28 tables (aucune fusion, aucun enum à la place d'une table)
+// - 29 tables (aucune fusion, aucun enum à la place d'une table)
 // - Tous les champs du diagramme sont présents, AUCUN champ ajouté qui ne
 //   figure pas explicitement dans le bloc entité d'origine
 // - COURSE ne contient PAS de client_id (conforme au diagramme corrigé)
 // - Relations conservées uniquement quand elles s'appuient sur des champs
 //   réellement déclarés dans les tables
+// - VALIDATION_PARTAGE_COURSE ajoutée pour gérer l'historique des validations
 // =============================================================================
 
 generator client {
@@ -35,7 +36,7 @@ model Utilisateur {
   derniereConnexion DateTime? @map("derniere_connexion")
   dateCreation      DateTime  @default(now()) @map("date_creation")
   dateModification  DateTime  @updatedAt @map("date_modification")
-  refreshToken         String?
+  refreshToken      String?
 
   utilisateurRoles UtilisateurRole[]
   otps             Otp[]
@@ -117,7 +118,7 @@ model Client {
   statut        String   @db.VarChar(50)
   dateCreation  DateTime @default(now()) @map("date_creation")
 
-  utilisateur           Utilisateur             @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  utilisateur           Utilisateur            @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
   contactUrgences       ContactUrgence[]
   propositionPrix       PropositionPrix[]
   demandePartageCourses DemandePartageCourse[]
@@ -275,29 +276,40 @@ model DocumentVehicule {
 // COURSE
 // -----------------------------------------------------------------------------
 // Conforme au bloc entité du diagramme : id, chauffeur_id, vehicule_id,
-// distance, prix_initial, prix_final, type_course, statut, partage_actif,
+// adresse_depart, latitude_depart, longitude_depart, adresse_arrivee,
+// latitude_arrivee, longitude_arrivee, distance, duree_estimee,
+// prix_initial, prix_negocie, prix_final, type_course, statut,
 // date_creation, date_acceptation, date_debut, date_fin.
 // AUCUN client_id (retiré à votre demande).
 // -----------------------------------------------------------------------------
 model Course {
-  id              BigInt    @id @default(autoincrement())
-  chauffeurId     BigInt?   @map("chauffeur_id")
-  vehiculeId      BigInt?   @map("vehicule_id")
-  distance        Decimal?  @db.Decimal(10, 2)
-  prixInitial     Decimal?  @map("prix_initial") @db.Decimal(12, 2)
-  prixFinal       Decimal?  @map("prix_final") @db.Decimal(12, 2)
-  typeCourse      String    @map("type_course") @db.VarChar(50)
-  statut          String    @db.VarChar(50)
-  partageActif    Boolean   @default(false) @map("partage_actif")
-  dateCreation    DateTime  @default(now()) @map("date_creation")
-  dateAcceptation DateTime? @map("date_acceptation")
-  dateDebut       DateTime? @map("date_debut")
-  dateFin         DateTime? @map("date_fin")
+  id                BigInt    @id @default(autoincrement())
+  chauffeurId       BigInt?   @map("chauffeur_id")
+  vehiculeId        BigInt?   @map("vehicule_id")
+  adresseDepart     String?   @map("adresse_depart") @db.VarChar(500)
+  latitudeDepart    Float?    @map("latitude_depart")
+  longitudeDepart   Float?    @map("longitude_depart")
+  adresseArrivee    String?   @map("adresse_arrivee") @db.VarChar(500)
+  latitudeArrivee   Float?    @map("latitude_arrivee")
+  longitudeArrivee  Float?    @map("longitude_arrivee")
+  distance          Decimal?  @db.Decimal(10, 2)
+  dureeEstimee      Decimal?  @map("duree_estimee") @db.Decimal(10, 2)
+  prixInitial       Decimal?  @map("prix_initial") @db.Decimal(12, 2)
+  prixNegocie       Decimal?  @map("prix_negocie") @db.Decimal(12, 2)
+  prixFinal         Decimal?  @map("prix_final") @db.Decimal(12, 2)
+  typeCourse        String    @map("type_course") @db.VarChar(50)
+  statut            String    @db.VarChar(50)
+  partageActif      Boolean   @default(false) @map("partage_actif")
+  dateCreation      DateTime  @default(now()) @map("date_creation")
+  dateAcceptation   DateTime? @map("date_acceptation")
+  dateDebut         DateTime? @map("date_debut")
+  dateFin           DateTime? @map("date_fin")
 
-  chauffeur             Chauffeur?              @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
-  vehicule              Vehicule?               @relation(fields: [vehiculeId], references: [id], onDelete: SetNull)
+  chauffeur             Chauffeur?                @relation(fields: [chauffeurId], references: [id], onDelete: SetNull)
+  vehicule              Vehicule?                 @relation(fields: [vehiculeId], references: [id], onDelete: SetNull)
   propositionPrix       PropositionPrix[]
   demandePartageCourses DemandePartageCourse[]
+  validationsPartage    ValidationPartageCourse[]
   participantCourses    ParticipantCourse[]
   paiements             Paiement[]
   enregistrementsAudio  EnregistrementAudio[]
@@ -354,13 +366,37 @@ model DemandePartageCourse {
   statut            String   @db.VarChar(50)
   dateCreation      DateTime @default(now()) @map("date_creation")
 
-  course          Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  clientDemandeur Client @relation(fields: [clientDemandeurId], references: [id], onDelete: Cascade)
+  course          Course                    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  clientDemandeur Client                    @relation(fields: [clientDemandeurId], references: [id], onDelete: Cascade)
+  validations     ValidationPartageCourse[]
 
   @@index([courseId])
   @@index([clientDemandeurId])
   @@index([statut])
   @@map("demande_partage_course")
+}
+
+// -----------------------------------------------------------------------------
+// VALIDATION_PARTAGE_COURSE
+// -----------------------------------------------------------------------------
+model ValidationPartageCourse {
+  id               BigInt   @id @default(autoincrement())
+  demandePartageId BigInt   @map("demande_partage_id")
+  utilisateurId    BigInt   @map("utilisateur_id")
+  typeValidateur   String   @map("type_validateur") @db.VarChar(50)
+  decision         String   @db.VarChar(50)
+  commentaire      String?  @db.VarChar(500)
+  dateValidation   DateTime @default(now()) @map("date_validation")
+
+  demandePartage DemandePartageCourse @relation(fields: [demandePartageId], references: [id], onDelete: Cascade)
+  course         Course?              @relation(fields: [courseId], references: [id])
+  courseId       BigInt?
+
+  @@index([demandePartageId])
+  @@index([utilisateurId])
+  @@index([typeValidateur])
+  @@index([decision])
+  @@map("validation_partage_course")
 }
 
 // -----------------------------------------------------------------------------
@@ -385,8 +421,8 @@ model ParticipantCourse {
   heureDescente    DateTime? @map("heure_descente")
   dateCreation     DateTime  @default(now()) @map("date_creation")
 
-  course   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  client    Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
   paiements Paiement[]
 
   @@index([courseId])
@@ -408,8 +444,8 @@ model Paiement {
   statut               String    @db.VarChar(50)
   datePaiement         DateTime? @map("date_paiement")
 
-  course              Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  participantCourse   ParticipantCourse @relation(fields: [participantCourseId], references: [id], onDelete: Restrict)
+  course            Course            @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  participantCourse ParticipantCourse @relation(fields: [participantCourseId], references: [id], onDelete: Restrict)
 
   @@index([courseId])
   @@index([participantCourseId])

@@ -1,23 +1,93 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { VehicleStatus, VehicleType } from '@prisma/client';
-import { IsEnum, IsInt, IsOptional, IsString, Max, Min } from 'class-validator';
-import { SearchPaginationQueryDto } from '../../common/dto/search-pagination-query.dto';
+import { Type } from 'class-transformer';
+import { IsInt, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 
+/**
+ * DTO pour la création d'un véhicule
+ */
 export class CreateVehicleDto {
-  @ApiProperty() @IsString() brand: string;
-  @ApiProperty() @IsString() model: string;
-  @ApiProperty() @IsInt() @Min(1990) @Max(2100) year: number;
-  @ApiProperty() @IsString() color: string;
-  @ApiProperty() @IsString() plateNumber: string;
-  @ApiProperty({ enum: VehicleType }) @IsEnum(VehicleType) type: VehicleType;
-  @ApiPropertyOptional() @IsOptional() @IsInt() @Min(1) @Max(20) seats?: number;
+  @ApiProperty({ example: 'Toyota' })
+  @IsString()
+  marque: string;
+
+  @ApiProperty({ example: 'Corolla' })
+  @IsString()
+  modele: string;
+
+  @ApiProperty({ example: 2020 })
+  @IsNumber()
+  @IsInt()
+  @Min(1900)
+  @Max(new Date().getFullYear() + 1)
+  annee: number;
+
+  @ApiProperty({ example: 'Blanc' })
+  @IsString()
+  couleur: string;
+
+  @ApiProperty({ example: 'AB-123-CD' })
+  @IsString()
+  matricule: string;
+
+  @ApiProperty({ example: '1' })
+  @IsString()
+  typeVehiculeId: string;
+
+  @ApiPropertyOptional({ example: '1', description: 'ID du chauffeur (optionnel pour ADMIN/SUPER_ADMIN)' })
+  @IsOptional()
+  @IsString()
+  chauffeurId?: string;
 }
 
-export class VehiclesQueryDto extends SearchPaginationQueryDto {
-  @ApiPropertyOptional({ enum: VehicleStatus }) @IsOptional() @IsEnum(VehicleStatus) status?: VehicleStatus;
-  @ApiPropertyOptional({ enum: VehicleType }) @IsOptional() @IsEnum(VehicleType) type?: VehicleType;
-}
-
+/**
+ * DTO pour la mise à jour du statut d'un véhicule
+ */
 export class UpdateVehicleStatusDto {
-  @ApiProperty({ enum: VehicleStatus }) @IsEnum(VehicleStatus) status: VehicleStatus;
+  @ApiProperty({ example: 'DISPONIBLE' })
+  @IsString()
+  statut: string;
+}
+
+/**
+ * DTO pour la recherche de véhicules
+ */
+export class VehiclesQueryDto {
+  @ApiPropertyOptional({ example: 'DISPONIBLE' })
+  @IsOptional()
+  @IsString()
+  statut?: string;
+
+  @ApiPropertyOptional({ example: '1' })
+  @IsOptional()
+  @IsString()
+  typeVehiculeId?: string;
+
+  @ApiPropertyOptional({ example: 'Toyota' })
+  @IsOptional()
+  @IsString()
+  search?: string;
+
+  @ApiPropertyOptional({ example: 'marque' })
+  @IsOptional()
+  @IsString()
+  sortBy?: string;
+
+  @ApiPropertyOptional({ example: 'asc' })
+  @IsOptional()
+  @IsString()
+  sortOrder?: string;
+
+  @ApiPropertyOptional({ example: 1 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page?: number;
+
+  @ApiPropertyOptional({ example: 10 })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  limit?: number;
 }

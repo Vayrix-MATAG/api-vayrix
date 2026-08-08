@@ -10,6 +10,9 @@ import { AppModule } from './app.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './modules/role/role.module';
+import { DriversModule } from './drivers/drivers.module';
+import { VehiclesModule } from './vehicles/vehicles.module';
+import { RidesModule } from './rides/rides.module';
 import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { buildSwaggerDocument } from './common/swagger/swagger.config';
@@ -90,7 +93,7 @@ async function bootstrap(): Promise<void> {
 
   const swaggerConfig = buildSwaggerDocument();
   const document = SwaggerModule.createDocument(app, swaggerConfig, {
-    include: [AppModule, AuthModule, UsersModule, RoleModule],
+    include: [AppModule, AuthModule, UsersModule, RoleModule, DriversModule, VehiclesModule, RidesModule],
     operationIdFactory: (_controllerKey, methodKey) => methodKey,
   });
 

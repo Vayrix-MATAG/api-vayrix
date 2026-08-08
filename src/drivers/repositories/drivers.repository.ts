@@ -1,59 +1,68 @@
 import { Injectable } from '@nestjs/common';
-import { DriverProfile, DriverStatus, Prisma } from '@prisma/client';
+import { Chauffeur, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { buildPaginatedResult, buildSearchOr, getPaginationParams } from '../../common/utils/pagination.util';
 import { PaginatedResult, PaginationOptions } from '../../common/interfaces/pagination.interface';
 
-const DRIVER_INCLUDE = {
-  user: {
-    select: { id: true, firstName: true, lastName: true, email: true, phone: true },
+const CHAUFFEUR_INCLUDE = {
+  utilisateur: {
+    select: { id: true, nom: true, prenom: true, email: true, telephone: true, photo: true },
   },
-} satisfies Prisma.DriverProfileInclude;
+} satisfies Prisma.ChauffeurInclude;
 
-export type DriverWithUser = Prisma.DriverProfileGetPayload<{ include: typeof DRIVER_INCLUDE }>;
+export type ChauffeurWithUtilisateur = Prisma.ChauffeurGetPayload<{ include: typeof CHAUFFEUR_INCLUDE }>;
 
 @Injectable()
 export class DriversRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.DriverProfileCreateInput): Promise<DriverProfile> {
-    return this.prisma.driverProfile.create({ data });
-  }
-
-  async findById(id: string): Promise<DriverProfile | null> {
-    return this.prisma.driverProfile.findUnique({ where: { id } });
-  }
-
-  async findByUserId(userId: string): Promise<DriverProfile | null> {
-    return this.prisma.driverProfile.findUnique({ where: { userId } });
-  }
-
-  async findDetailById(id: string): Promise<DriverWithUser | null> {
-    return this.prisma.driverProfile.findUnique({
-      where: { id },
-      include: DRIVER_INCLUDE,
+  async findByUtilisateurId(utilisateurId: bigint): Promise<ChauffeurWithUtilisateur | null> {
+    return this.prisma.chauffeur.findUnique({
+      where: { utilisateurId },
+      include: CHAUFFEUR_INCLUDE,
     });
   }
 
-  async findAll(options: PaginationOptions & { status?: DriverStatus; isApproved?: boolean }): Promise<PaginatedResult<DriverWithUser>> {
-    const { skip, take, orderBy } = getPaginationParams(options);
-    const searchOr = buildSearchOr(options.search, ['firstName', 'lastName', 'email', 'phone']);
+  async findById(id: bigint): Promise<ChauffeurWithUtilisateur | null> {
+    return this.prisma.chauffeur.findUnique({
+      where: { id },
+      include: CHAUFFEUR_INCLUDE,
+    });
+  }
 
-    const where: Prisma.DriverProfileWhereInput = {
-      ...(options.status && { status: options.status }),
-      ...(typeof options.isApproved === 'boolean' && { isApproved: options.isApproved }),
-      ...(searchOr && { user: { OR: searchOr } }),
+  async findAll(options: PaginationOptions & { statut?: string; estEnLigne?: boolean }): Promise<PaginatedResult<ChauffeurWithUtilisateur>> {
+    const { skip, take, orderBy } = getPaginationParams(options);
+    const searchOr = buildSearchOr(options.search, ['nom', 'prenom', 'email', 'telephone']);
+
+    const where: Prisma.ChauffeurWhereInput = {
+      ...(options.statut && { statut: options.statut }),
+      ...(typeof options.estEnLigne === 'boolean' && { estEnLigne: options.estEnLigne }),
+      ...(searchOr && { utilisateur: { OR: searchOr } }),
     };
 
     const [data, total] = await Promise.all([
-      this.prisma.driverProfile.findMany({ where, skip, take, orderBy, include: DRIVER_INCLUDE }),
-      this.prisma.driverProfile.count({ where }),
+      this.prisma.chauffeur.findMany({ where, skip, take, orderBy, include: CHAUFFEUR_INCLUDE }),
+      this.prisma.chauffeur.count({ where }),
     ]);
 
     return buildPaginatedResult(data, total, options.page, options.limit);
   }
 
-  async update(id: string, data: Prisma.DriverProfileUpdateInput): Promise<DriverWithUser> {
-    return this.prisma.driverProfile.update({ where: { id }, data, include: DRIVER_INCLUDE });
+  async update(id: bigint, data: Prisma.ChauffeurUpdateInput): Promise<ChauffeurWithUtilisateur> {
+    return this.prisma.chauffeur.update({ where: { id }, data, include: CHAUFFEUR_INCLUDE });
+  }
+
+  async updateOnlineStatus(id: bigint, estEnLigne: boolean): Promise<Chauffeur> {
+    return this.prisma.chauffeur.update({
+      where: { id },
+      data: { estEnLigne },
+    });
+  }
+
+  async updateStatus(id: bigint, statut: string, motifStatut?: string): Promise<Chauffeur> {
+    return this.prisma.chauffeur.update({
+      where: { id },
+      data: { statut, motifStatut },
+    });
   }
 }

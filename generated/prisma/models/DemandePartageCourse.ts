@@ -302,6 +302,7 @@ export type DemandePartageCourseWhereInput = {
   dateCreation?: Prisma.DateTimeFilter<"DemandePartageCourse"> | Date | string
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
   clientDemandeur?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
+  validations?: Prisma.ValidationPartageCourseListRelationFilter
 }
 
 export type DemandePartageCourseOrderByWithRelationInput = {
@@ -319,6 +320,7 @@ export type DemandePartageCourseOrderByWithRelationInput = {
   dateCreation?: Prisma.SortOrder
   course?: Prisma.CourseOrderByWithRelationInput
   clientDemandeur?: Prisma.ClientOrderByWithRelationInput
+  validations?: Prisma.ValidationPartageCourseOrderByRelationAggregateInput
 }
 
 export type DemandePartageCourseWhereUniqueInput = Prisma.AtLeast<{
@@ -339,6 +341,7 @@ export type DemandePartageCourseWhereUniqueInput = Prisma.AtLeast<{
   dateCreation?: Prisma.DateTimeFilter<"DemandePartageCourse"> | Date | string
   course?: Prisma.XOR<Prisma.CourseScalarRelationFilter, Prisma.CourseWhereInput>
   clientDemandeur?: Prisma.XOR<Prisma.ClientScalarRelationFilter, Prisma.ClientWhereInput>
+  validations?: Prisma.ValidationPartageCourseListRelationFilter
 }, "id">
 
 export type DemandePartageCourseOrderByWithAggregationInput = {
@@ -392,6 +395,7 @@ export type DemandePartageCourseCreateInput = {
   dateCreation?: Date | string
   course: Prisma.CourseCreateNestedOneWithoutDemandePartageCoursesInput
   clientDemandeur: Prisma.ClientCreateNestedOneWithoutDemandePartageCoursesInput
+  validations?: Prisma.ValidationPartageCourseCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseUncheckedCreateInput = {
@@ -407,6 +411,7 @@ export type DemandePartageCourseUncheckedCreateInput = {
   prixCalcule: runtime.Decimal | runtime.DecimalJsLike | number | string
   statut: string
   dateCreation?: Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseUpdateInput = {
@@ -422,6 +427,7 @@ export type DemandePartageCourseUpdateInput = {
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   course?: Prisma.CourseUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
   clientDemandeur?: Prisma.ClientUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
+  validations?: Prisma.ValidationPartageCourseUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseUncheckedUpdateInput = {
@@ -437,6 +443,7 @@ export type DemandePartageCourseUncheckedUpdateInput = {
   prixCalcule?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statut?: Prisma.StringFieldUpdateOperationsInput | string
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseCreateManyInput = {
@@ -559,6 +566,11 @@ export type DemandePartageCourseSumOrderByAggregateInput = {
   prixCalcule?: Prisma.SortOrder
 }
 
+export type DemandePartageCourseScalarRelationFilter = {
+  is?: Prisma.DemandePartageCourseWhereInput
+  isNot?: Prisma.DemandePartageCourseWhereInput
+}
+
 export type DemandePartageCourseCreateNestedManyWithoutClientDemandeurInput = {
   create?: Prisma.XOR<Prisma.DemandePartageCourseCreateWithoutClientDemandeurInput, Prisma.DemandePartageCourseUncheckedCreateWithoutClientDemandeurInput> | Prisma.DemandePartageCourseCreateWithoutClientDemandeurInput[] | Prisma.DemandePartageCourseUncheckedCreateWithoutClientDemandeurInput[]
   connectOrCreate?: Prisma.DemandePartageCourseCreateOrConnectWithoutClientDemandeurInput | Prisma.DemandePartageCourseCreateOrConnectWithoutClientDemandeurInput[]
@@ -643,6 +655,20 @@ export type DemandePartageCourseUncheckedUpdateManyWithoutCourseNestedInput = {
   deleteMany?: Prisma.DemandePartageCourseScalarWhereInput | Prisma.DemandePartageCourseScalarWhereInput[]
 }
 
+export type DemandePartageCourseCreateNestedOneWithoutValidationsInput = {
+  create?: Prisma.XOR<Prisma.DemandePartageCourseCreateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedCreateWithoutValidationsInput>
+  connectOrCreate?: Prisma.DemandePartageCourseCreateOrConnectWithoutValidationsInput
+  connect?: Prisma.DemandePartageCourseWhereUniqueInput
+}
+
+export type DemandePartageCourseUpdateOneRequiredWithoutValidationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DemandePartageCourseCreateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedCreateWithoutValidationsInput>
+  connectOrCreate?: Prisma.DemandePartageCourseCreateOrConnectWithoutValidationsInput
+  upsert?: Prisma.DemandePartageCourseUpsertWithoutValidationsInput
+  connect?: Prisma.DemandePartageCourseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DemandePartageCourseUpdateToOneWithWhereWithoutValidationsInput, Prisma.DemandePartageCourseUpdateWithoutValidationsInput>, Prisma.DemandePartageCourseUncheckedUpdateWithoutValidationsInput>
+}
+
 export type DemandePartageCourseCreateWithoutClientDemandeurInput = {
   id?: bigint | number
   adresseDepart: string
@@ -655,6 +681,7 @@ export type DemandePartageCourseCreateWithoutClientDemandeurInput = {
   statut: string
   dateCreation?: Date | string
   course: Prisma.CourseCreateNestedOneWithoutDemandePartageCoursesInput
+  validations?: Prisma.ValidationPartageCourseCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseUncheckedCreateWithoutClientDemandeurInput = {
@@ -669,6 +696,7 @@ export type DemandePartageCourseUncheckedCreateWithoutClientDemandeurInput = {
   prixCalcule: runtime.Decimal | runtime.DecimalJsLike | number | string
   statut: string
   dateCreation?: Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseCreateOrConnectWithoutClientDemandeurInput = {
@@ -727,6 +755,7 @@ export type DemandePartageCourseCreateWithoutCourseInput = {
   statut: string
   dateCreation?: Date | string
   clientDemandeur: Prisma.ClientCreateNestedOneWithoutDemandePartageCoursesInput
+  validations?: Prisma.ValidationPartageCourseCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseUncheckedCreateWithoutCourseInput = {
@@ -741,6 +770,7 @@ export type DemandePartageCourseUncheckedCreateWithoutCourseInput = {
   prixCalcule: runtime.Decimal | runtime.DecimalJsLike | number | string
   statut: string
   dateCreation?: Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedCreateNestedManyWithoutDemandePartageInput
 }
 
 export type DemandePartageCourseCreateOrConnectWithoutCourseInput = {
@@ -769,6 +799,82 @@ export type DemandePartageCourseUpdateManyWithWhereWithoutCourseInput = {
   data: Prisma.XOR<Prisma.DemandePartageCourseUpdateManyMutationInput, Prisma.DemandePartageCourseUncheckedUpdateManyWithoutCourseInput>
 }
 
+export type DemandePartageCourseCreateWithoutValidationsInput = {
+  id?: bigint | number
+  adresseDepart: string
+  adresseArrivee: string
+  latitudeArrivee: number
+  longitudeArrivee: number
+  latitudeDepart: number
+  longitudeDepart: number
+  prixCalcule: runtime.Decimal | runtime.DecimalJsLike | number | string
+  statut: string
+  dateCreation?: Date | string
+  course: Prisma.CourseCreateNestedOneWithoutDemandePartageCoursesInput
+  clientDemandeur: Prisma.ClientCreateNestedOneWithoutDemandePartageCoursesInput
+}
+
+export type DemandePartageCourseUncheckedCreateWithoutValidationsInput = {
+  id?: bigint | number
+  courseId: bigint | number
+  clientDemandeurId: bigint | number
+  adresseDepart: string
+  adresseArrivee: string
+  latitudeArrivee: number
+  longitudeArrivee: number
+  latitudeDepart: number
+  longitudeDepart: number
+  prixCalcule: runtime.Decimal | runtime.DecimalJsLike | number | string
+  statut: string
+  dateCreation?: Date | string
+}
+
+export type DemandePartageCourseCreateOrConnectWithoutValidationsInput = {
+  where: Prisma.DemandePartageCourseWhereUniqueInput
+  create: Prisma.XOR<Prisma.DemandePartageCourseCreateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedCreateWithoutValidationsInput>
+}
+
+export type DemandePartageCourseUpsertWithoutValidationsInput = {
+  update: Prisma.XOR<Prisma.DemandePartageCourseUpdateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedUpdateWithoutValidationsInput>
+  create: Prisma.XOR<Prisma.DemandePartageCourseCreateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedCreateWithoutValidationsInput>
+  where?: Prisma.DemandePartageCourseWhereInput
+}
+
+export type DemandePartageCourseUpdateToOneWithWhereWithoutValidationsInput = {
+  where?: Prisma.DemandePartageCourseWhereInput
+  data: Prisma.XOR<Prisma.DemandePartageCourseUpdateWithoutValidationsInput, Prisma.DemandePartageCourseUncheckedUpdateWithoutValidationsInput>
+}
+
+export type DemandePartageCourseUpdateWithoutValidationsInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
+  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
+  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
+  prixCalcule?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  statut?: Prisma.StringFieldUpdateOperationsInput | string
+  dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  course?: Prisma.CourseUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
+  clientDemandeur?: Prisma.ClientUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
+}
+
+export type DemandePartageCourseUncheckedUpdateWithoutValidationsInput = {
+  id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  courseId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  clientDemandeurId?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
+  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
+  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
+  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
+  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
+  prixCalcule?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  statut?: Prisma.StringFieldUpdateOperationsInput | string
+  dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type DemandePartageCourseCreateManyClientDemandeurInput = {
   id?: bigint | number
   courseId: bigint | number
@@ -795,6 +901,7 @@ export type DemandePartageCourseUpdateWithoutClientDemandeurInput = {
   statut?: Prisma.StringFieldUpdateOperationsInput | string
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   course?: Prisma.CourseUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
+  validations?: Prisma.ValidationPartageCourseUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseUncheckedUpdateWithoutClientDemandeurInput = {
@@ -809,6 +916,7 @@ export type DemandePartageCourseUncheckedUpdateWithoutClientDemandeurInput = {
   prixCalcule?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statut?: Prisma.StringFieldUpdateOperationsInput | string
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseUncheckedUpdateManyWithoutClientDemandeurInput = {
@@ -851,6 +959,7 @@ export type DemandePartageCourseUpdateWithoutCourseInput = {
   statut?: Prisma.StringFieldUpdateOperationsInput | string
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   clientDemandeur?: Prisma.ClientUpdateOneRequiredWithoutDemandePartageCoursesNestedInput
+  validations?: Prisma.ValidationPartageCourseUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseUncheckedUpdateWithoutCourseInput = {
@@ -865,6 +974,7 @@ export type DemandePartageCourseUncheckedUpdateWithoutCourseInput = {
   prixCalcule?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   statut?: Prisma.StringFieldUpdateOperationsInput | string
   dateCreation?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  validations?: Prisma.ValidationPartageCourseUncheckedUpdateManyWithoutDemandePartageNestedInput
 }
 
 export type DemandePartageCourseUncheckedUpdateManyWithoutCourseInput = {
@@ -882,6 +992,35 @@ export type DemandePartageCourseUncheckedUpdateManyWithoutCourseInput = {
 }
 
 
+/**
+ * Count Type DemandePartageCourseCountOutputType
+ */
+
+export type DemandePartageCourseCountOutputType = {
+  validations: number
+}
+
+export type DemandePartageCourseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  validations?: boolean | DemandePartageCourseCountOutputTypeCountValidationsArgs
+}
+
+/**
+ * DemandePartageCourseCountOutputType without action
+ */
+export type DemandePartageCourseCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DemandePartageCourseCountOutputType
+   */
+  select?: Prisma.DemandePartageCourseCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DemandePartageCourseCountOutputType without action
+ */
+export type DemandePartageCourseCountOutputTypeCountValidationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ValidationPartageCourseWhereInput
+}
+
 
 export type DemandePartageCourseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -898,6 +1037,8 @@ export type DemandePartageCourseSelect<ExtArgs extends runtime.Types.Extensions.
   dateCreation?: boolean
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
   clientDemandeur?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
+  validations?: boolean | Prisma.DemandePartageCourse$validationsArgs<ExtArgs>
+  _count?: boolean | Prisma.DemandePartageCourseCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["demandePartageCourse"]>
 
 export type DemandePartageCourseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -953,6 +1094,8 @@ export type DemandePartageCourseOmit<ExtArgs extends runtime.Types.Extensions.In
 export type DemandePartageCourseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
   clientDemandeur?: boolean | Prisma.ClientDefaultArgs<ExtArgs>
+  validations?: boolean | Prisma.DemandePartageCourse$validationsArgs<ExtArgs>
+  _count?: boolean | Prisma.DemandePartageCourseCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DemandePartageCourseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   course?: boolean | Prisma.CourseDefaultArgs<ExtArgs>
@@ -968,6 +1111,7 @@ export type $DemandePartageCoursePayload<ExtArgs extends runtime.Types.Extension
   objects: {
     course: Prisma.$CoursePayload<ExtArgs>
     clientDemandeur: Prisma.$ClientPayload<ExtArgs>
+    validations: Prisma.$ValidationPartageCoursePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: bigint
@@ -1378,6 +1522,7 @@ export interface Prisma__DemandePartageCourseClient<T, Null = never, ExtArgs ext
   readonly [Symbol.toStringTag]: "PrismaPromise"
   course<T extends Prisma.CourseDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CourseDefaultArgs<ExtArgs>>): Prisma.Prisma__CourseClient<runtime.Types.Result.GetResult<Prisma.$CoursePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   clientDemandeur<T extends Prisma.ClientDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ClientDefaultArgs<ExtArgs>>): Prisma.Prisma__ClientClient<runtime.Types.Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  validations<T extends Prisma.DemandePartageCourse$validationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DemandePartageCourse$validationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ValidationPartageCoursePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1817,6 +1962,30 @@ export type DemandePartageCourseDeleteManyArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many DemandePartageCourses to delete.
    */
   limit?: number
+}
+
+/**
+ * DemandePartageCourse.validations
+ */
+export type DemandePartageCourse$validationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ValidationPartageCourse
+   */
+  select?: Prisma.ValidationPartageCourseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ValidationPartageCourse
+   */
+  omit?: Prisma.ValidationPartageCourseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ValidationPartageCourseInclude<ExtArgs> | null
+  where?: Prisma.ValidationPartageCourseWhereInput
+  orderBy?: Prisma.ValidationPartageCourseOrderByWithRelationInput | Prisma.ValidationPartageCourseOrderByWithRelationInput[]
+  cursor?: Prisma.ValidationPartageCourseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ValidationPartageCourseScalarFieldEnum | Prisma.ValidationPartageCourseScalarFieldEnum[]
 }
 
 /**

@@ -14,6 +14,9 @@ const app_module_1 = require("./app.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const role_module_1 = require("./modules/role/role.module");
+const drivers_module_1 = require("./drivers/drivers.module");
+const vehicles_module_1 = require("./vehicles/vehicles.module");
+const rides_module_1 = require("./rides/rides.module");
 const prisma_exception_filter_1 = require("./common/filters/prisma-exception.filter");
 const logging_interceptor_1 = require("./common/interceptors/logging.interceptor");
 const swagger_config_1 = require("./common/swagger/swagger.config");
@@ -33,13 +36,30 @@ async function bootstrap() {
     const publicPath = (0, path_1.join)(process.cwd(), 'public');
     await prismaService.enableShutdownHooks();
     app.use((0, helmet_1.default)({
+        hsts: false,
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                styleSrc: ["'self'", "'unsafe-inline'"],
-                scriptSrc: ["'self'", "'unsafe-inline'"],
-                imgSrc: ["'self'", 'data:', 'https:'],
-                connectSrc: ["'self'"],
+                styleSrc: [
+                    "'self'",
+                    "'unsafe-inline'",
+                ],
+                scriptSrc: [
+                    "'self'",
+                    "'unsafe-inline'",
+                ],
+                imgSrc: [
+                    "'self'",
+                    "data:",
+                    "http:",
+                    "https:",
+                ],
+                connectSrc: [
+                    "'self'",
+                    "http:",
+                    "https:",
+                ],
+                upgradeInsecureRequests: null,
             },
         },
     }));
@@ -57,7 +77,7 @@ async function bootstrap() {
     app.use((0, docs_auth_middleware_1.createDocsAuthMiddleware)(jwtSecret, publicPath));
     const swaggerConfig = (0, swagger_config_1.buildSwaggerDocument)();
     const document = swagger_1.SwaggerModule.createDocument(app, swaggerConfig, {
-        include: [app_module_1.AppModule, auth_module_1.AuthModule, users_module_1.UsersModule, role_module_1.RoleModule],
+        include: [app_module_1.AppModule, auth_module_1.AuthModule, users_module_1.UsersModule, role_module_1.RoleModule, drivers_module_1.DriversModule, vehicles_module_1.VehiclesModule, rides_module_1.RidesModule],
         operationIdFactory: (_controllerKey, methodKey) => methodKey,
     });
     swagger_1.SwaggerModule.setup('docs', app, document, {
@@ -104,7 +124,7 @@ async function bootstrap() {
     });
     const port = configService.getOrThrow('port');
     await app.listen(port);
-    logger.log(`VAYRIX API d�marr�e sur le port ${port}`);
+    logger.log(`VAYRIX API démarrée sur le port ${port}`);
     logger.log(`Documentation : http://localhost:${port}`);
 }
 bootstrap();

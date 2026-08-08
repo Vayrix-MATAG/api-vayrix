@@ -172,6 +172,7 @@ export declare const ModelName: {
     readonly Course: "Course";
     readonly PropositionPrix: "PropositionPrix";
     readonly DemandePartageCourse: "DemandePartageCourse";
+    readonly ValidationPartageCourse: "ValidationPartageCourse";
     readonly ParticipantCourse: "ParticipantCourse";
     readonly Paiement: "Paiement";
     readonly PositionChauffeur: "PositionChauffeur";
@@ -198,7 +199,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "utilisateur" | "otp" | "role" | "utilisateurRole" | "client" | "contactUrgence" | "localisation" | "chauffeur" | "typeVehicule" | "vehicule" | "documentChauffeur" | "documentVehicule" | "course" | "propositionPrix" | "demandePartageCourse" | "participantCourse" | "paiement" | "positionChauffeur" | "modeSecurite" | "enregistrementAudio" | "transcriptionAudio" | "analyseSecurite" | "alerteSecurite" | "notification" | "evaluationChauffeur" | "evaluationClient" | "administrateur" | "journalAudit" | "tarification";
+        modelProps: "utilisateur" | "otp" | "role" | "utilisateurRole" | "client" | "contactUrgence" | "localisation" | "chauffeur" | "typeVehicule" | "vehicule" | "documentChauffeur" | "documentVehicule" | "course" | "propositionPrix" | "demandePartageCourse" | "validationPartageCourse" | "participantCourse" | "paiement" | "positionChauffeur" | "modeSecurite" | "enregistrementAudio" | "transcriptionAudio" | "analyseSecurite" | "alerteSecurite" | "notification" | "evaluationChauffeur" | "evaluationClient" | "administrateur" | "journalAudit" | "tarification";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -1309,6 +1310,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 count: {
                     args: Prisma.DemandePartageCourseCountArgs<ExtArgs>;
                     result: runtime.Types.Utils.Optional<Prisma.DemandePartageCourseCountAggregateOutputType> | number;
+                };
+            };
+        };
+        ValidationPartageCourse: {
+            payload: Prisma.$ValidationPartageCoursePayload<ExtArgs>;
+            fields: Prisma.ValidationPartageCourseFieldRefs;
+            operations: {
+                findUnique: {
+                    args: Prisma.ValidationPartageCourseFindUniqueArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload> | null;
+                };
+                findUniqueOrThrow: {
+                    args: Prisma.ValidationPartageCourseFindUniqueOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                findFirst: {
+                    args: Prisma.ValidationPartageCourseFindFirstArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload> | null;
+                };
+                findFirstOrThrow: {
+                    args: Prisma.ValidationPartageCourseFindFirstOrThrowArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                findMany: {
+                    args: Prisma.ValidationPartageCourseFindManyArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>[];
+                };
+                create: {
+                    args: Prisma.ValidationPartageCourseCreateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                createMany: {
+                    args: Prisma.ValidationPartageCourseCreateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                createManyAndReturn: {
+                    args: Prisma.ValidationPartageCourseCreateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>[];
+                };
+                delete: {
+                    args: Prisma.ValidationPartageCourseDeleteArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                update: {
+                    args: Prisma.ValidationPartageCourseUpdateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                deleteMany: {
+                    args: Prisma.ValidationPartageCourseDeleteManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateMany: {
+                    args: Prisma.ValidationPartageCourseUpdateManyArgs<ExtArgs>;
+                    result: BatchPayload;
+                };
+                updateManyAndReturn: {
+                    args: Prisma.ValidationPartageCourseUpdateManyAndReturnArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>[];
+                };
+                upsert: {
+                    args: Prisma.ValidationPartageCourseUpsertArgs<ExtArgs>;
+                    result: runtime.Types.Utils.PayloadToResult<Prisma.$ValidationPartageCoursePayload>;
+                };
+                aggregate: {
+                    args: Prisma.ValidationPartageCourseAggregateArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.AggregateValidationPartageCourse>;
+                };
+                groupBy: {
+                    args: Prisma.ValidationPartageCourseGroupByArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ValidationPartageCourseGroupByOutputType>[];
+                };
+                count: {
+                    args: Prisma.ValidationPartageCourseCountArgs<ExtArgs>;
+                    result: runtime.Types.Utils.Optional<Prisma.ValidationPartageCourseCountAggregateOutputType> | number;
                 };
             };
         };
@@ -2495,8 +2570,16 @@ export declare const CourseScalarFieldEnum: {
     readonly id: "id";
     readonly chauffeurId: "chauffeurId";
     readonly vehiculeId: "vehiculeId";
+    readonly adresseDepart: "adresseDepart";
+    readonly latitudeDepart: "latitudeDepart";
+    readonly longitudeDepart: "longitudeDepart";
+    readonly adresseArrivee: "adresseArrivee";
+    readonly latitudeArrivee: "latitudeArrivee";
+    readonly longitudeArrivee: "longitudeArrivee";
     readonly distance: "distance";
+    readonly dureeEstimee: "dureeEstimee";
     readonly prixInitial: "prixInitial";
+    readonly prixNegocie: "prixNegocie";
     readonly prixFinal: "prixFinal";
     readonly typeCourse: "typeCourse";
     readonly statut: "statut";
@@ -2533,6 +2616,17 @@ export declare const DemandePartageCourseScalarFieldEnum: {
     readonly dateCreation: "dateCreation";
 };
 export type DemandePartageCourseScalarFieldEnum = (typeof DemandePartageCourseScalarFieldEnum)[keyof typeof DemandePartageCourseScalarFieldEnum];
+export declare const ValidationPartageCourseScalarFieldEnum: {
+    readonly id: "id";
+    readonly demandePartageId: "demandePartageId";
+    readonly utilisateurId: "utilisateurId";
+    readonly typeValidateur: "typeValidateur";
+    readonly decision: "decision";
+    readonly commentaire: "commentaire";
+    readonly dateValidation: "dateValidation";
+    readonly courseId: "courseId";
+};
+export type ValidationPartageCourseScalarFieldEnum = (typeof ValidationPartageCourseScalarFieldEnum)[keyof typeof ValidationPartageCourseScalarFieldEnum];
 export declare const ParticipantCourseScalarFieldEnum: {
     readonly id: "id";
     readonly courseId: "courseId";
@@ -2739,6 +2833,7 @@ export type GlobalOmitConfig = {
     course?: Prisma.CourseOmit;
     propositionPrix?: Prisma.PropositionPrixOmit;
     demandePartageCourse?: Prisma.DemandePartageCourseOmit;
+    validationPartageCourse?: Prisma.ValidationPartageCourseOmit;
     participantCourse?: Prisma.ParticipantCourseOmit;
     paiement?: Prisma.PaiementOmit;
     positionChauffeur?: Prisma.PositionChauffeurOmit;

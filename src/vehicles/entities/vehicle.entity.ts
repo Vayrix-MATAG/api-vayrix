@@ -1,15 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { VehicleStatus, VehicleType } from '@prisma/client';
 
 export class VehicleEntity {
-  @ApiProperty() id: string;
-  @ApiProperty() driverId: string;
-  @ApiProperty() brand: string;
-  @ApiProperty() model: string;
-  @ApiProperty() year: number;
-  @ApiProperty() color: string;
-  @ApiProperty() plateNumber: string;
-  @ApiProperty({ enum: VehicleType }) type: VehicleType;
-  @ApiProperty({ enum: VehicleStatus }) status: VehicleStatus;
-  @ApiProperty() seats: number;
+  @ApiProperty()
+  id: bigint;
+
+  @ApiProperty()
+  chauffeurId: bigint;
+
+  @ApiProperty()
+  typeVehiculeId: bigint;
+
+  @ApiProperty()
+  marque: string;
+
+  @ApiProperty()
+  modele: string;
+
+  @ApiProperty()
+  couleur: string;
+
+  @ApiProperty()
+  matricule: string;
+
+  @ApiProperty()
+  annee: number;
+
+  @ApiProperty()
+  statut: string;
+
+  @ApiProperty()
+  typeVehicule?: {
+    id: bigint;
+    nom: string;
+    prixBase: number;
+    prixParKm: number;
+  };
 }

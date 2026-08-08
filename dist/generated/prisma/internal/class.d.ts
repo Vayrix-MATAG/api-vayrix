@@ -75,6 +75,9 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
     get demandePartageCourse(): Prisma.DemandePartageCourseDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;
+    get validationPartageCourse(): Prisma.ValidationPartageCourseDelegate<ExtArgs, {
+        omit: OmitOpts;
+    }>;
     get participantCourse(): Prisma.ParticipantCourseDelegate<ExtArgs, {
         omit: OmitOpts;
     }>;

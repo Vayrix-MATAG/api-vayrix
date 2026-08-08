@@ -2,12 +2,28 @@
 
 Backend NestJS 11 pour la plateforme de transport **VAYRIX** (type Uber).
 
+## 📋 Vue d'ensemble
+
 | Élément | Détail |
 |---------|--------|
 | **Stack** | NestJS 11, Prisma 7, PostgreSQL, JWT, Nodemailer, Swagger |
 | **Préfixe API** | `/api/v1` |
 | **Documentation** | `http://localhost:<PORT>` → connexion OTP → `/docs` |
 | **Santé** | `GET /api/v1/health` |
+| **Version** | 0.0.1 |
+| **Licence** | Private |
+
+## 🚀 Fonctionnalités principales
+
+- **Authentification complète** : Inscription, connexion (mot de passe/OTP), refresh tokens, logout
+- **OTP multi-canal** : Support SMS et email pour la 2FA et la récupération de compte
+- **Gestion des utilisateurs** : Profil, photo, langue, téléphone, suppression de compte
+- **Sécurité avancée** : JWT avec access/refresh tokens, guards, rate limiting, Helmet
+- **Email HTML** : Templates HTML pour OTP, bienvenue, reset mot de passe via Nodemailer
+- **SMS** : Provider configurable (mock pour dev, HTTP pour prod)
+- **Documentation Swagger** : Protégée par OTP, avec bouton de déconnexion
+- **Base de données** : 28 tables PostgreSQL avec schéma français
+- **Docker Swarm** : Déploiement production avec secrets et health checks
 
 ---
 
@@ -19,6 +35,9 @@ Backend NestJS 11 pour la plateforme de transport **VAYRIX** (type Uber).
 |--------|------|--------|
 | **Auth** | Inscription, connexion, OTP, reset MDP, session JWT | ✅ Opérationnel |
 | **Users** | Profil utilisateur connecté | ✅ Opérationnel |
+| **Role** | Gestion des rôles (ADMIN, CLIENT, CHAUFFEUR, SUPER_ADMIN) | ✅ Opérationnel |
+| **Drivers** | Gestion des chauffeurs (profil, statut, position GPS) | ✅ Opérationnel |
+| **Vehicles** | Gestion des véhicules (création, statut, types) | ✅ Opérationnel |
 | **Otp** | Génération / vérification OTP (table `otp`) | ✅ Opérationnel |
 | **Mail** | Emails HTML (OTP, bienvenue, reset MDP) via Nodemailer | ✅ Opérationnel |
 | **Sms** | Envoi SMS (`mock` dev / `http` prod) | ✅ Opérationnel |
@@ -32,8 +51,6 @@ Ces modules existent dans `src/` mais sont **désactivés** le temps de finalise
 
 | Module | Domaine métier |
 |--------|----------------|
-| `drivers` | Chauffeurs |
-| `vehicles` | Véhicules |
 | `rides` | Courses |
 | `payments` | Paiements |
 | `notifications` | Notifications |
@@ -45,13 +62,66 @@ Ces modules existent dans `src/` mais sont **désactivés** le temps de finalise
 
 ### Base de données (Prisma)
 
-- **28 tables** PostgreSQL (schéma français : `Utilisateur`, `Course`, `Chauffeur`, etc.)
-- **Seed** : données de démonstration sur l'ensemble des tables
+- **29 tables** PostgreSQL (schéma français : `Utilisateur`, `Course`, `Chauffeur`, etc.)
+- **Seed** : données de démonstration avec 4 comptes de test
 - **OTP** centralisé dans la table `otp` (plus de champs OTP sur `Utilisateur`)
+- **Relations complètes** : Utilisateur ↔ Client/Chauffeur/Administrateur, Course ↔ Paiements, etc.
+
+#### Tables principales
+
+| Table | Description |
+|-------|-------------|
+| `Utilisateur` | Utilisateurs de base (authentification) |
+| `Role` | Rôles système (ADMIN, CLIENT, CHAUFFEUR, SUPER_ADMIN) |
+| `Client` | Profils clients passagers |
+| `Chauffeur` | Profils chauffeurs |
+| `Vehicule` | Véhicules des chauffeurs |
+| `TypeVehicule` | Types de véhicules avec tarification |
+| `Course` | Courses de transport |
+| `Paiement` | Paiements des courses |
+| `Otp` | Codes OTP centralisés |
+| `Notification` | Notifications utilisateurs |
+| `EvaluationChauffeur` | Évaluations des chauffeurs |
+| `EvaluationClient` | Évaluations des clients |
+| `PositionChauffeur` | Positions GPS chauffeurs |
+| `DocumentChauffeur` | Documents chauffeurs |
+| `DocumentVehicule` | Documents véhicules |
+| `ModeSecurite` | Mode sécurité utilisateurs |
+| `AlerteSecurite` | Alertes SOS |
+| `EnregistrementAudio` | Enregistrements audio courses |
+| `AnalyseSecurite` | Analyses de sécurité |
+| `TranscriptionAudio` | Transcriptions audio |
+| `ContactUrgence` | Contacts d'urgence |
+| `Localisation` | Localisations utilisateurs |
+| `PropositionPrix` | Propositions de prix |
+| `DemandePartageCourse` | Demandes de partage |
+| `ValidationPartageCourse` | Validations de partage de courses |
+| `ParticipantCourse` | Participants aux courses |
+| `Administrateur` | Administrateurs système |
+| `JournalAudit` | Journal d'audit |
+| `Tarification` | Règles de tarification |
 
 ---
 
-## Architecture
+## Architecture technique
+
+### Stack technique
+
+| Composant | Version | Description |
+|-----------|---------|-------------|
+| **Framework** | NestJS 11 | Framework Node.js TypeScript |
+| **ORM** | Prisma 7 | ORM type-safe pour PostgreSQL |
+| **Base de données** | PostgreSQL 16+ | Base de données relationnelle |
+| **Authentification** | JWT + Passport | Access tokens (15min) + Refresh tokens (7j) |
+| **Email** | Nodemailer | Envoi d'emails HTML via SMTP |
+| **SMS** | Custom Provider | Mock (dev) / HTTP (prod) |
+| **Validation** | class-validator | DTO validation |
+| **Documentation** | Swagger/OpenAPI | Documentation interactive |
+| **Sécurité** | Helmet + Throttler | HTTP headers + Rate limiting |
+| **Tests** | Jest | Framework de tests |
+| **Docker** | Docker Swarm | Orchestration containers |
+
+### Architecture applicative
 
 ```mermaid
 flowchart TB
@@ -64,6 +134,7 @@ flowchart TB
         MW[docs-auth.middleware]
         AUTH[AuthModule]
         USERS[UsersModule]
+        ROLE[RoleModule]
         OTP[OtpModule]
         MAIL[MailModule]
         SMS[SmsModule]
@@ -81,6 +152,7 @@ flowchart TB
     WEB -->|"/docs" Swagger| MW
     WEB -->|"/api/v1/*"| AUTH
     WEB -->|"/api/v1/*"| USERS
+    WEB -->|"/api/v1/*"| ROLE
 
     MW -->|JWT cookie| AUTH
     AUTH --> OTP
@@ -89,6 +161,7 @@ flowchart TB
     AUTH --> USERS
     AUTH --> PRISMA
     USERS --> PRISMA
+    ROLE --> PRISMA
     OTP --> PRISMA
     PRISMA --> PG
     MAIL --> SMTP
@@ -116,9 +189,12 @@ flowchart TB
 - **Guard global** : `JwtAuthGuard` — décorateur `@Public()` pour les routes ouvertes
 - **Rôles** : `RolesGuard` + `@Roles()` (prêt, utilisé par les modules métier à venir)
 - **OTP Guard** : `OtpGuard` disponible pour les étapes sensibles
-- **Rate limiting** : `ThrottlerModule`
-- **Helmet** : en-têtes HTTP sécurisés
+- **Rate limiting** : `ThrottlerModule` (100 req / 60s par défaut)
+- **Helmet** : en-têtes HTTP sécurisés (CSP, HSTS désactivé pour dev)
+- **CORS** : Configurable via `CORS_ORIGINS`
 - **Swagger** : protégé par connexion email + OTP (`vayrix_docs_token` cookie)
+- **Bcrypt** : Hashage des mots de passe (12 rounds)
+- **Validation** : DTO validation avec `class-validator`
 
 ### Format d'erreur global
 
@@ -136,7 +212,7 @@ Toutes les exceptions HTTP sont uniformisées par `GlobalExceptionFilter` :
 
 ---
 
-## API fonctionnelles
+## 📡 API Endpoints
 
 > Toutes les routes ci-dessous sont préfixées par **`/api/v1`**.  
 > Les routes marquées 🔒 nécessitent `Authorization: Bearer <accessToken>`.
@@ -192,6 +268,28 @@ Toutes les exceptions HTTP sont uniformisées par `GlobalExceptionFilter` :
 | `DELETE` | `/users/me` | 🔒 | Supprimer mon compte |
 | `GET` | `/users/:id` | 🔒 | Détail d'un utilisateur par ID |
 
+### Drivers — Chauffeurs
+
+| Méthode | Route | Auth | Rôle | Description |
+|---------|-------|------|------|-------------|
+| `GET` | `/drivers/me` | 🔒 | CHAUFFEUR | Mon profil chauffeur |
+| `PATCH` | `/drivers/me` | 🔒 | CHAUFFEUR | Modifier mon profil |
+| `PATCH` | `/drivers/me/online` | 🔒 | CHAUFFEUR | Modifier statut en ligne |
+| `PATCH` | `/drivers/me/status` | 🔒 | CHAUFFEUR, ADMIN | Modifier statut |
+| `POST` | `/drivers/me/location` | 🔒 | CHAUFFEUR | Mettre à jour position GPS |
+| `GET` | `/drivers` | 🔒 | ADMIN | Lister tous les chauffeurs |
+| `GET` | `/drivers/:id` | 🔒 | ADMIN | Détail d'un chauffeur |
+
+### Vehicles — Véhicules
+
+| Méthode | Route | Auth | Rôle | Description |
+|---------|-------|------|------|-------------|
+| `POST` | `/vehicles` | 🔒 | CHAUFFEUR | Créer un véhicule |
+| `GET` | `/vehicles` | 🔒 | ADMIN, CHAUFFEUR | Lister tous les véhicules |
+| `GET` | `/vehicles/:id` | 🔒 | ADMIN, CHAUFFEUR | Détail d'un véhicule |
+| `PATCH` | `/vehicles/:id/status` | 🔒 | ADMIN | Modifier statut véhicule |
+| `DELETE` | `/vehicles/:id` | 🔒 | ADMIN | Supprimer un véhicule |
+
 ### Comptes de test (seed)
 
 | Rôle | Email | Téléphone | Mot de passe |
@@ -199,7 +297,7 @@ Toutes les exceptions HTTP sont uniformisées par `GlobalExceptionFilter` :
 | Admin | `admin@vayrix.com` | `+221770000001` | `Password123!` |
 | Client | `client@vayrix.com` | `+221770000002` | `Password123!` |
 | Chauffeur | `chauffeur@vayrix.com` | `+221770000003` | `Password123!` |
-| Admin | `nengue382@gmail.com` | `+237697573894` | `admin123` |
+| Super Admin | `nengue382@gmail.com` | `+237697573894` | `admin123` |
 
 ```bash
 npx prisma migrate reset --force   # Réinitialiser + seed
@@ -208,15 +306,15 @@ npm run prisma:seed                # Seed seul (base vide)
 
 ---
 
-## Structure du projet
+## 📁 Structure du projet
 
 ```
-Backend cursor/
+api-vayrix/
 ├── prisma/
-│   ├── schema.prisma          # Schéma 28 tables
-│   ├── seed.ts                # Données de démonstration
-│   └── migrations/            # Migrations SQL
-├── generated/prisma/          # Client Prisma généré
+│   ├── schema.prisma          # Schéma 28 tables PostgreSQL
+│   ├── seed.ts                # Données de démonstration (4 comptes test)
+│   └── migrations/            # Migrations SQL historiques
+├── generated/prisma/          # Client Prisma généré (output)
 ├── public/
 │   ├── assets/vayrix-logo.png # Logo (page connexion + Swagger)
 │   ├── docs-login.html        # Page connexion documentation
@@ -228,7 +326,7 @@ Backend cursor/
 │   └── swarm.env.example      # Modèle déploiement Swarm
 ├── src/
 │   ├── main.ts                # Bootstrap, Swagger, middleware docs
-│   ├── app.module.ts          # Modules actifs
+│   ├── app.module.ts          # Modules actifs (Auth, Users, Role, etc.)
 │   ├── app.controller.ts      # GET /health
 │   ├── config/
 │   │   ├── app.config.ts
@@ -237,7 +335,7 @@ Backend cursor/
 │   │   ├── mail.config.ts
 │   │   ├── sms.config.ts
 │   │   ├── swagger.config.ts
-│   │   └── configuration.ts   # agrégation rétrocompatible
+│   │   └── configuration.ts   # Agrégation configuration .env
 │   ├── docs/
 │   │   └── docs-auth.middleware.ts  # Protection / et /docs
 │   ├── auth/
@@ -255,6 +353,8 @@ Backend cursor/
 │   │   ├── repositories/
 │   │   ├── dto/
 │   │   └── entities/
+│   ├── modules/
+│   │   └── role/              # Module Role (rôles système)
 │   ├── otp/                   # Service OTP centralisé
 │   ├── mail/                  # Nodemailer + templates HTML
 │   ├── sms/                   # Provider mock | http
@@ -275,138 +375,312 @@ Backend cursor/
 │   │   └── dto/               # compatibilité ancienne structure
 │   │
 │   │  # ── Modules métier (présents, non activés) ──
-│   ├── drivers/
-│   ├── vehicles/
-│   ├── rides/
-│   ├── payments/
-│   ├── notifications/
-│   ├── uploads/
-│   ├── sos/
-│   ├── sharing/
-│   ├── realtime/
-│   └── queues/
+│   ├── drivers/               # Module chauffeurs (désactivé)
+│   ├── vehicles/              # Module véhicules (désactivé)
+│   ├── rides/                 # Module courses (désactivé)
+│   ├── payments/              # Module paiements (désactivé)
+│   ├── notifications/         # Module notifications (désactivé)
+│   ├── uploads/               # Module uploads (désactivé)
+│   ├── sos/                   # Module alertes SOS (désactivé)
+│   ├── sharing/               # Module partage courses (désactivé)
+│   ├── realtime/              # Module WebSocket (désactivé)
+│   └── queues/                # Module BullMQ/Redis (désactivé)
 ├── .env                       # Configuration locale (unique)
 ├── .env.example               # Modèle Git (non lu par l'app)
-├── docker-stack.yml
-├── Dockerfile
-└── README.md
+├── docker-stack.yml           # Stack Docker Swarm
+├── Dockerfile                 # Image Docker multi-étapes
+├── package.json              # Dépendances NPM
+├── tsconfig.json              # Configuration TypeScript
+├── nest-cli.json              # Configuration NestJS CLI
+├── .prettierrc                # Configuration Prettier
+├── eslint.config.mjs          # Configuration ESLint
+└── README.md                  # Ce fichier
 ```
 
 ---
 
-## Prérequis
+## ⚙️ Prérequis
 
-- Node.js 22+
-- PostgreSQL 16+
-- Redis 7+ (optionnel — requis pour `queues` / `realtime` à l'activation)
-- npm
+- **Node.js** 22+ (recommandé : dernière LTS)
+- **PostgreSQL** 16+ (avec base de données créée)
+- **Redis** 7+ (optionnel — requis pour `queues` / `realtime` à l'activation)
+- **npm** ou **yarn**
+- **Git** (pour cloner le dépôt)
 
----
+## 🚀 Installation locale
 
-## Installation locale
+### 1. Cloner le dépôt
+
+```bash
+git clone <repository-url>
+cd api-vayrix
+```
+
+### 2. Installer les dépendances
 
 ```bash
 npm install
 ```
 
-Configurez **uniquement** le fichier `.env` à la racine (toutes les variables y sont listées).
+### 3. Configuration de l'environnement
 
-### Base de données
+Copiez le fichier `.env.example` vers `.env` et configurez les variables :
 
 ```bash
-npx prisma migrate dev
-npm run prisma:seed
+cp .env.example .env
+```
+
+Configurez **uniquement** le fichier `.env` à la racine (toutes les variables y sont listées). Le fichier `.env.example` est un modèle Git et **n'est pas lu par l'application**.
+
+### 4. Configuration de la base de données
+
+Assurez-vous que PostgreSQL est en cours d'exécution et que la base de données existe.
+
+```bash
+# Exemple de création de base PostgreSQL
+createdb vayrix_api
+```
+
+### 5. Migrations et seed
+
+```bash
+# Générer le client Prisma
 npx prisma generate
+
+# Exécuter les migrations
+npx prisma migrate dev
+
+# Peupler la base avec les données de test
+npm run prisma:seed
 ```
 
-### Démarrage
+### 6. Démarrage de l'application
 
 ```bash
-npm run start:dev      # Développement (watch)
-npm run build          # Compilation
-npm run start:prod     # Production
+# Mode développement (avec hot-reload)
+npm run start:dev
+
+# Mode production
+npm run build
+npm run start:prod
 ```
 
-L'API REST est sur `http://localhost:<PORT>/api/v1`.
+L'API REST sera accessible sur `http://localhost:<PORT>/api/v1` (par défaut : `http://localhost:3000/api/v1`).
 
-### Documentation Swagger
+### 7. Accès à la documentation Swagger
 
-1. Ouvrir **`http://localhost:<PORT>`**
+1. Ouvrir **`http://localhost:<PORT>`** (par défaut : `http://localhost:3000`)
 2. Non connecté → page de connexion (email + code OTP)
 3. Connecté → redirection automatique vers **`/docs`**
 4. Bouton **Déconnexion** en haut à droite de Swagger
 
+**Pour accéder à Swagger en développement :**
+- Utilisez un compte de test (ex: `admin@vayrix.com` / `Password123!`)
+- Le code OTP s'affichera dans les logs serveur si `SMS_PROVIDER=mock`
+
 ---
 
-## Variables d'environnement
+## 🔐 Variables d'environnement
 
 **Fichier unique : `.env`** — `src/config/configuration.ts` lit `process.env` via `ConfigModule`.
 
 > `.env.example` est un modèle Git sans secrets, **non lu par l'application**.
 
-| Section | Variables clés |
-|---------|----------------|
-| Application | `NODE_ENV`, `PORT`, `API_PREFIX`, `FRONTEND_URL` |
-| Base de données | `DATABASE_URL`, `DATABASE_POOL_MAX` |
-| JWT | `JWT_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EXPIRES_IN`, `JWT_REFRESH_EXPIRES_IN` |
-| Email | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USER`, `MAIL_PASSWORD`, `MAIL_FROM_*` |
-| SMS | `SMS_PROVIDER` (`mock` \| `http`), `SMS_API_URL`, `SMS_API_KEY` |
-| OTP | `OTP_EXPIRY_MINUTES`, `OTP_RESEND_COOLDOWN_SECONDS`, `OTP_MAX_ATTEMPTS` |
-| Redis | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` |
-| CORS | `CORS_ORIGINS` |
-| Rate limit | `THROTTLE_TTL`, `THROTTLE_LIMIT` |
+### Application
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `NODE_ENV` | `development` | Environnement (development/production) |
+| `PORT` | `3000` | Port d'écoute HTTP |
+| `API_PREFIX` | `api/v1` | Préfixe des routes API |
+| `FRONTEND_URL` | `http://localhost:3000` | URL frontend pour CORS |
+
+### Base de données
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `DATABASE_URL` | - | Chaîne de connexion PostgreSQL |
+| `DATABASE_POOL_MAX` | `10` | Taille max du pool de connexions |
+
+### JWT
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `JWT_SECRET` | - | Secret pour les access tokens (obligatoire) |
+| `JWT_EXPIRES_IN` | `15m` | Durée de validité access token |
+| `JWT_REFRESH_SECRET` | - | Secret pour les refresh tokens (obligatoire) |
+| `JWT_REFRESH_EXPIRES_IN` | `7d` | Durée de validité refresh token |
+
+### Email (SMTP)
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `MAIL_HOST` | `smtp.gmail.com` | Serveur SMTP |
+| `MAIL_PORT` | `587` | Port SMTP |
+| `MAIL_SECURE` | `false` | SSL/TLS |
+| `MAIL_USER` | - | Utilisateur SMTP |
+| `MAIL_PASSWORD` | - | Mot de passe SMTP |
+| `MAIL_FROM_EMAIL` | - | Email d'envoi |
+| `MAIL_FROM_NAME` | `VAYRIX` | Nom d'envoi |
+| `MAIL_LOGO_URL` | - | URL logo pour emails HTML |
 
 > **Gmail :** [mot de passe d'application](https://myaccount.google.com/apppasswords) requis pour `MAIL_PASSWORD`.
 
-En dev (`SMS_PROVIDER=mock`), les codes OTP SMS s'affichent dans les logs serveur.  
-En dev, les codes OTP email peuvent aussi apparaître dans les logs (`[MAIL:DEV]`).
+### SMS
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `SMS_PROVIDER` | `mock` | Provider (`mock` ou `http`) |
+| `SMS_API_URL` | - | URL API SMS (si provider=http) |
+| `SMS_API_KEY` | - | Clé API SMS |
+| `SMS_API_SECRET` | - | Secret API SMS |
+| `SMS_SENDER_ID` | `VAYRIX` | ID émetteur SMS |
+
+### OTP
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `OTP_EXPIRY_MINUTES` | `5` | Durée de validité OTP |
+| `OTP_RESEND_COOLDOWN_SECONDS` | `60` | Délai minimum entre renvois |
+| `OTP_MAX_ATTEMPTS` | `5` | Nombre max de tentatives |
+
+### Redis
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `REDIS_HOST` | `localhost` | Hôte Redis |
+| `REDIS_PORT` | `6379` | Port Redis |
+| `REDIS_PASSWORD` | - | Mot de passe Redis |
+
+### CORS & Rate Limiting
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `CORS_ORIGINS` | `http://localhost:3000` | Origines autorisées (séparées par virgules) |
+| `THROTTLE_TTL` | `60000` | Délai rate limiting (ms) |
+| `THROTTLE_LIMIT` | `100` | Nombre max de requêtes |
+
+### Stockage & Tarification
+
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `STORAGE_PATH` | `storage` | Chemin stockage fichiers |
+| `MAX_FILE_SIZE` | `10485760` | Taille max fichier (octets) |
+| `CURRENCY` | `XOF` | Devise tarification |
+| `BASE_FARE` | `500` | Prix de base course |
+| `PER_KM_RATE` | `250` | Prix par km |
+| `PER_MIN_RATE` | `50` | Prix par minute |
+
+### Notes de développement
+
+- En dev (`SMS_PROVIDER=mock`), les codes OTP SMS s'affichent dans les logs serveur
+- En dev, les codes OTP email peuvent aussi apparaître dans les logs (`[MAIL:DEV]`)
+- Les secrets JWT doivent être uniques et robustes en production
 
 ---
 
-## Scripts utiles
+## 🛠️ Scripts utiles
 
 ```bash
-npm run build              # Compiler
-npm run start:dev          # Dev watch
-npm run prisma:migrate     # Migration dev
-npm run prisma:seed        # Peupler la BD
-npm run prisma:studio      # Interface Prisma
-npx prisma migrate reset --force   # Réinitialiser la BD (destructif)
+# Développement
+npm run start:dev          # Mode développement avec hot-reload
+npm run start:debug        # Mode développement avec debug
+npm run build              # Compiler le projet
+npm run start:prod         # Démarrer en production
+
+# Tests
+npm run test               # Exécuter les tests unitaires
+npm run test:watch         # Tests en mode watch
+npm run test:cov           # Tests avec couverture
+npm run test:e2e           # Tests end-to-end
+
+# Prisma / Base de données
+npm run prisma:generate   # Générer le client Prisma
+npm run prisma:migrate     # Migration développement
+npm run prisma:seed        # Peupler la base de données
+npm run prisma:studio      # Ouvrir Prisma Studio (interface visuelle)
+npx prisma migrate reset --force   # Réinitialiser la base (destructif)
+
+# Code quality
+npm run lint               # Linter avec auto-fix
+npm run format             # Formatter avec Prettier
 ```
 
 ---
 
-## Déploiement Docker Swarm
+## 🐳 Déploiement Docker Swarm
+
+### Architecture de déploiement
 
 | Fichier | Rôle |
 |---------|------|
 | `Dockerfile` | Image multi-étapes Node 22 Alpine |
 | `docker-stack.yml` | Stack Swarm (API + PostgreSQL + Redis) |
-| `docker/entrypoint.sh` | Migrations Prisma + démarrage |
+| `docker/entrypoint.sh` | Migrations Prisma + démarrage container |
 | `docker/swarm.env.example` | Modèle Git pour Swarm (pas pour le dev local) |
 
+### Prérequis Swarm
+
+- Docker Swarm initialisé sur le manager
+- Réseau overlay créé
+- Secrets Docker créés
+
+### Instructions de déploiement
+
 ```bash
+# 1. Initialiser Swarm (si pas déjà fait)
 docker swarm init
+
+# 2. Créer le réseau overlay
 docker network create --driver overlay vayrix-net
 
-# Secrets
+# 3. Créer les secrets Docker
 echo "votre-jwt-secret"      | docker secret create vayrix_jwt_secret -
 echo "votre-refresh-secret"  | docker secret create vayrix_jwt_refresh_secret -
 echo "mot-de-passe-postgres" | docker secret create vayrix_db_password -
 echo "mot-de-passe-smtp"     | docker secret create vayrix_mail_password -
-echo "cle-api-sms"             | docker secret create vayrix_sms_api_key -
+echo "cle-api-sms"           | docker secret create vayrix_sms_api_key -
 
+# 4. Construire l'image
 docker build -t vayrix-api:latest .
+
+# 5. Déployer la stack
 docker stack deploy -c docker-stack.yml vayrix
 ```
+
+### Commandes utiles Swarm
+
+```bash
+# Voir les services
+docker stack services vayrix
+
+# Voir les tâches
+docker stack ps vayrix
+
+# Logs du service API
+docker service logs vayrix_api -f
+
+# Supprimer la stack
+docker stack rm vayrix
+```
+
+### Configuration de production
+
+La stack Swarm inclut :
+- **2 replicas** de l'API (avec rolling updates)
+- **PostgreSQL** avec volume persistant
+- **Redis** pour les queues/realtime
+- **Health checks** sur tous les services
+- **Resource limits** (CPU, mémoire)
+- **Secrets Docker** pour les données sensibles
 
 > Le développement local utilise **uniquement** `.env` à la racine.
 
 ---
 
-## Règles obligatoires pour les prochains modules (Agent / Dev)
+## 📐 Règles de développement
 
-Ces règles sont **obligatoires** pour tout nouveau module métier (`Role`, `Client`, `Chauffeur`, `Véhicule`, `Course`, etc.).
+Ces règles sont **obligatoires** pour tout nouveau module métier.
 
 ### Architecture imposée
 
@@ -446,7 +720,7 @@ module/
 - Types : `src/common/types/*`
 - Config : `src/config/*.config.ts` (aucune valeur en dur)
 
-### Swagger obligatoire
+### Documentation Swagger obligatoire
 
 Pour chaque endpoint :
 
@@ -456,9 +730,7 @@ Pour chaque endpoint :
 - `@ApiBearerAuth('JWT')` sur les routes protégées
 - DTO/Entities entièrement annotés avec `@ApiProperty()`
 
----
-
-## Maintenir Swagger à jour
+### Mise à jour Swagger
 
 Lors de l'ajout ou la modification d'un endpoint :
 
@@ -472,4 +744,143 @@ Lors de l'ajout ou la modification d'un endpoint :
 
 ---
 
+## 🔧 Dépannage
+
+### Problèmes courants
+
+**Erreur de connexion PostgreSQL**
+```bash
+# Vérifier que PostgreSQL est en cours d'exécution
+pg_isready
+
+# Vérifier la base de données existe
+psql -U postgres -l
+```
+
+**Erreur Prisma "Client not generated"**
+```bash
+npm run prisma:generate
+```
+
+**Erreur de migration**
+```bash
+# Réinitialiser complètement la base (attention : destructif)
+npx prisma migrate reset --force
+```
+
+**OTP non reçu en développement**
+- Vérifiez que `SMS_PROVIDER=mock` dans `.env`
+- Les codes OTP s'affichent dans les logs serveur
+- Pour email, vérifiez la configuration SMTP
+
+**Erreur JWT "Invalid token"**
+- Vérifiez que `JWT_SECRET` et `JWT_REFRESH_SECRET` sont définis
+- En production, utilisez des secrets robustes
+- Les tokens expirent : utilisez `/auth/refresh` pour renouveler
+
+### Logs et debugging
+
+```bash
+# Logs en temps réel (mode dev)
+npm run start:dev
+
+# Logs Docker Swarm
+docker service logs vayrix_api -f
+
+# Logs PostgreSQL
+docker service logs vayrix_postgres -f
+```
+
+---
+
+## 📚 Ressources supplémentaires
+
+### Documentation officielle
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Docker Swarm Documentation](https://docs.docker.com/engine/swarm/)
+
+### Outils de développement
+
+- **Prisma Studio** : Interface visuelle pour la base de données (`npm run prisma:studio`)
+- **Swagger UI** : Documentation interactive des API (`http://localhost:3000/docs`)
+- **Postman/Insomnia** : Pour tester les endpoints API
+
+### Architecture et patterns
+
+- **Repository Pattern** : Séparation logique d'accès aux données
+- **DTO Pattern** : Data Transfer Objects pour validation
+- **Guard Pattern** : Protection des routes avec NestJS
+- **Interceptor Pattern** : Transformation des réponses API
+
+---
+
+## 🤝 Contribution
+
+### Guidelines de contribution
+
+1. **Fork** le projet
+2. Créer une **branche** (`git checkout -b feature/ma-fonctionnalite`)
+3. **Commit** vos changements (`git commit -m 'Ajout de ma fonctionnalité'`)
+4. **Push** vers la branche (`git push origin feature/ma-fonctionnalite`)
+5. Ouvrir une **Pull Request**
+
+### Code style
+
+- Suivez les conventions ESLint et Prettier
+- Ajoutez des commentaires pour le code complexe
+- Documentez les nouvelles fonctions avec JSDoc
+- Mettez à jour la documentation Swagger pour les nouveaux endpoints
+
+### Tests
+
+- Ajoutez des tests unitaires pour les nouvelles fonctions
+- Ajoutez des tests e2e pour les nouveaux endpoints
+- Assurez-vous que tous les tests passent avant de commit
+
+---
+
+## 📞 Support
+
+Pour toute question ou problème :
+
+- **Email** : support@vayrix.com
+- **Documentation** : `http://localhost:3000/docs` (après connexion)
+- **Issues** : Créez une issue sur le dépôt Git
+
+---
+
+## 📄 Licence
+
 Projet privé — **VAYRIX** © 2026
+
+Tous droits réservés. Ce projet est la propriété exclusive de VAYRIX.
+
+---
+
+## 🎯 Roadmap
+
+### À venir (modules désactivés)
+
+- [ ] **Drivers** : Gestion complète des chauffeurs
+- [ ] **Vehicles** : Gestion des véhicules et types
+- [ ] **Rides** : Système de courses complet
+- [ ] **Payments** : Intégration paiements
+- [ ] **Notifications** : Système de notifications push
+- [ ] **Uploads** : Gestion des fichiers uploads
+- [ ] **SOS** : Système d'alertes sécurité
+- [ ] **Sharing** : Partage de courses
+- [ ] **Realtime** : WebSocket pour tracking en temps réel
+- [ ] **Queues** : BullMQ pour tâches asynchrones
+
+### Améliorations prévues
+
+- [ ] Tests unitaires complets
+- [ ] Tests e2e automatisés
+- [ ] CI/CD pipeline
+- [ ] Monitoring et logging avancé
+- [ ] Cache Redis pour performances
+- [ ] Rate limiting par utilisateur
+- [ ] Webhooks pour intégrations externes

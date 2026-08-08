@@ -21,6 +21,7 @@ export type DocumentVehicule = Prisma.DocumentVehiculeModel;
 export type Course = Prisma.CourseModel;
 export type PropositionPrix = Prisma.PropositionPrixModel;
 export type DemandePartageCourse = Prisma.DemandePartageCourseModel;
+export type ValidationPartageCourse = Prisma.ValidationPartageCourseModel;
 export type ParticipantCourse = Prisma.ParticipantCourseModel;
 export type Paiement = Prisma.PaiementModel;
 export type PositionChauffeur = Prisma.PositionChauffeurModel;

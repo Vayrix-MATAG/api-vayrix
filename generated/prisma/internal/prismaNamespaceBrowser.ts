@@ -66,6 +66,7 @@ export const ModelName = {
   Course: 'Course',
   PropositionPrix: 'PropositionPrix',
   DemandePartageCourse: 'DemandePartageCourse',
+  ValidationPartageCourse: 'ValidationPartageCourse',
   ParticipantCourse: 'ParticipantCourse',
   Paiement: 'Paiement',
   PositionChauffeur: 'PositionChauffeur',
@@ -250,8 +251,16 @@ export const CourseScalarFieldEnum = {
   id: 'id',
   chauffeurId: 'chauffeurId',
   vehiculeId: 'vehiculeId',
+  adresseDepart: 'adresseDepart',
+  latitudeDepart: 'latitudeDepart',
+  longitudeDepart: 'longitudeDepart',
+  adresseArrivee: 'adresseArrivee',
+  latitudeArrivee: 'latitudeArrivee',
+  longitudeArrivee: 'longitudeArrivee',
   distance: 'distance',
+  dureeEstimee: 'dureeEstimee',
   prixInitial: 'prixInitial',
+  prixNegocie: 'prixNegocie',
   prixFinal: 'prixFinal',
   typeCourse: 'typeCourse',
   statut: 'statut',
@@ -295,6 +304,20 @@ export const DemandePartageCourseScalarFieldEnum = {
 } as const
 
 export type DemandePartageCourseScalarFieldEnum = (typeof DemandePartageCourseScalarFieldEnum)[keyof typeof DemandePartageCourseScalarFieldEnum]
+
+
+export const ValidationPartageCourseScalarFieldEnum = {
+  id: 'id',
+  demandePartageId: 'demandePartageId',
+  utilisateurId: 'utilisateurId',
+  typeValidateur: 'typeValidateur',
+  decision: 'decision',
+  commentaire: 'commentaire',
+  dateValidation: 'dateValidation',
+  courseId: 'courseId'
+} as const
+
+export type ValidationPartageCourseScalarFieldEnum = (typeof ValidationPartageCourseScalarFieldEnum)[keyof typeof ValidationPartageCourseScalarFieldEnum]
 
 
 export const ParticipantCourseScalarFieldEnum = {

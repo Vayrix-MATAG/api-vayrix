@@ -26,6 +26,7 @@ export declare const ModelName: {
     readonly Course: "Course";
     readonly PropositionPrix: "PropositionPrix";
     readonly DemandePartageCourse: "DemandePartageCourse";
+    readonly ValidationPartageCourse: "ValidationPartageCourse";
     readonly ParticipantCourse: "ParticipantCourse";
     readonly Paiement: "Paiement";
     readonly PositionChauffeur: "PositionChauffeur";
@@ -165,8 +166,16 @@ export declare const CourseScalarFieldEnum: {
     readonly id: "id";
     readonly chauffeurId: "chauffeurId";
     readonly vehiculeId: "vehiculeId";
+    readonly adresseDepart: "adresseDepart";
+    readonly latitudeDepart: "latitudeDepart";
+    readonly longitudeDepart: "longitudeDepart";
+    readonly adresseArrivee: "adresseArrivee";
+    readonly latitudeArrivee: "latitudeArrivee";
+    readonly longitudeArrivee: "longitudeArrivee";
     readonly distance: "distance";
+    readonly dureeEstimee: "dureeEstimee";
     readonly prixInitial: "prixInitial";
+    readonly prixNegocie: "prixNegocie";
     readonly prixFinal: "prixFinal";
     readonly typeCourse: "typeCourse";
     readonly statut: "statut";
@@ -203,6 +212,17 @@ export declare const DemandePartageCourseScalarFieldEnum: {
     readonly dateCreation: "dateCreation";
 };
 export type DemandePartageCourseScalarFieldEnum = (typeof DemandePartageCourseScalarFieldEnum)[keyof typeof DemandePartageCourseScalarFieldEnum];
+export declare const ValidationPartageCourseScalarFieldEnum: {
+    readonly id: "id";
+    readonly demandePartageId: "demandePartageId";
+    readonly utilisateurId: "utilisateurId";
+    readonly typeValidateur: "typeValidateur";
+    readonly decision: "decision";
+    readonly commentaire: "commentaire";
+    readonly dateValidation: "dateValidation";
+    readonly courseId: "courseId";
+};
+export type ValidationPartageCourseScalarFieldEnum = (typeof ValidationPartageCourseScalarFieldEnum)[keyof typeof ValidationPartageCourseScalarFieldEnum];
 export declare const ParticipantCourseScalarFieldEnum: {
     readonly id: "id";
     readonly courseId: "courseId";

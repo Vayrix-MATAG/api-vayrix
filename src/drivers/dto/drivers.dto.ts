@@ -1,56 +1,51 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { DriverStatus } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsBoolean, IsDateString, IsEnum, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
 import { SearchPaginationQueryDto } from '../../common/dto/search-pagination-query.dto';
 
-export class CreateDriverDto {
-  @ApiProperty()
+export class UpdateDriverProfileDto {
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsString()
-  licenseNumber: string;
-
-  @ApiProperty()
-  @IsDateString()
-  licenseExpiry: string;
-}
-
-export class UpdateDriverLocationDto {
-  @ApiProperty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(-90)
-  @Max(90)
-  lat: number;
-
-  @ApiProperty()
-  @Type(() => Number)
-  @IsNumber()
-  @Min(-180)
-  @Max(180)
-  lng: number;
+  nom?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
-  @Type(() => Number)
-  @IsNumber()
-  heading?: number;
+  @IsString()
+  prenom?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  telephone?: string;
+}
+
+export class UpdateDriverOnlineDto {
+  @ApiProperty()
+  @IsBoolean()
+  estEnLigne: boolean;
 }
 
 export class UpdateDriverStatusDto {
-  @ApiProperty({ enum: DriverStatus })
-  @IsEnum(DriverStatus)
-  status: DriverStatus;
+  @ApiProperty()
+  @IsString()
+  statut: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  motifStatut?: string;
 }
 
 export class DriversQueryDto extends SearchPaginationQueryDto {
-  @ApiPropertyOptional({ enum: DriverStatus })
+  @ApiPropertyOptional()
   @IsOptional()
-  @IsEnum(DriverStatus)
-  status?: DriverStatus;
+  @IsString()
+  statut?: string;
 
   @ApiPropertyOptional()
   @IsOptional()
   @Type(() => Boolean)
   @IsBoolean()
-  isApproved?: boolean;
+  estEnLigne?: boolean;
 }

@@ -33,8 +33,8 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.QueryMode = exports.SortOrder = exports.TarificationScalarFieldEnum = exports.JournalAuditScalarFieldEnum = exports.AdministrateurScalarFieldEnum = exports.EvaluationClientScalarFieldEnum = exports.EvaluationChauffeurScalarFieldEnum = exports.NotificationScalarFieldEnum = exports.AlerteSecuriteScalarFieldEnum = exports.AnalyseSecuriteScalarFieldEnum = exports.TranscriptionAudioScalarFieldEnum = exports.EnregistrementAudioScalarFieldEnum = exports.ModeSecuriteScalarFieldEnum = exports.PositionChauffeurScalarFieldEnum = exports.PaiementScalarFieldEnum = exports.ParticipantCourseScalarFieldEnum = exports.DemandePartageCourseScalarFieldEnum = exports.PropositionPrixScalarFieldEnum = exports.CourseScalarFieldEnum = exports.DocumentVehiculeScalarFieldEnum = exports.DocumentChauffeurScalarFieldEnum = exports.VehiculeScalarFieldEnum = exports.TypeVehiculeScalarFieldEnum = exports.ChauffeurScalarFieldEnum = exports.LocalisationScalarFieldEnum = exports.ContactUrgenceScalarFieldEnum = exports.ClientScalarFieldEnum = exports.UtilisateurRoleScalarFieldEnum = exports.RoleScalarFieldEnum = exports.OtpScalarFieldEnum = exports.UtilisateurScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
-exports.defineExtension = exports.NullsOrder = void 0;
+exports.SortOrder = exports.TarificationScalarFieldEnum = exports.JournalAuditScalarFieldEnum = exports.AdministrateurScalarFieldEnum = exports.EvaluationClientScalarFieldEnum = exports.EvaluationChauffeurScalarFieldEnum = exports.NotificationScalarFieldEnum = exports.AlerteSecuriteScalarFieldEnum = exports.AnalyseSecuriteScalarFieldEnum = exports.TranscriptionAudioScalarFieldEnum = exports.EnregistrementAudioScalarFieldEnum = exports.ModeSecuriteScalarFieldEnum = exports.PositionChauffeurScalarFieldEnum = exports.PaiementScalarFieldEnum = exports.ParticipantCourseScalarFieldEnum = exports.ValidationPartageCourseScalarFieldEnum = exports.DemandePartageCourseScalarFieldEnum = exports.PropositionPrixScalarFieldEnum = exports.CourseScalarFieldEnum = exports.DocumentVehiculeScalarFieldEnum = exports.DocumentChauffeurScalarFieldEnum = exports.VehiculeScalarFieldEnum = exports.TypeVehiculeScalarFieldEnum = exports.ChauffeurScalarFieldEnum = exports.LocalisationScalarFieldEnum = exports.ContactUrgenceScalarFieldEnum = exports.ClientScalarFieldEnum = exports.UtilisateurRoleScalarFieldEnum = exports.RoleScalarFieldEnum = exports.OtpScalarFieldEnum = exports.UtilisateurScalarFieldEnum = exports.TransactionIsolationLevel = exports.ModelName = exports.AnyNull = exports.JsonNull = exports.DbNull = exports.NullTypes = exports.prismaVersion = exports.getExtensionContext = exports.Decimal = exports.Sql = exports.raw = exports.join = exports.empty = exports.sql = exports.PrismaClientValidationError = exports.PrismaClientInitializationError = exports.PrismaClientRustPanicError = exports.PrismaClientUnknownRequestError = exports.PrismaClientKnownRequestError = void 0;
+exports.defineExtension = exports.NullsOrder = exports.QueryMode = void 0;
 const runtime = __importStar(require("@prisma/client/runtime/client"));
 exports.PrismaClientKnownRequestError = runtime.PrismaClientKnownRequestError;
 exports.PrismaClientUnknownRequestError = runtime.PrismaClientUnknownRequestError;
@@ -76,6 +76,7 @@ exports.ModelName = {
     Course: 'Course',
     PropositionPrix: 'PropositionPrix',
     DemandePartageCourse: 'DemandePartageCourse',
+    ValidationPartageCourse: 'ValidationPartageCourse',
     ParticipantCourse: 'ParticipantCourse',
     Paiement: 'Paiement',
     PositionChauffeur: 'PositionChauffeur',
@@ -201,8 +202,16 @@ exports.CourseScalarFieldEnum = {
     id: 'id',
     chauffeurId: 'chauffeurId',
     vehiculeId: 'vehiculeId',
+    adresseDepart: 'adresseDepart',
+    latitudeDepart: 'latitudeDepart',
+    longitudeDepart: 'longitudeDepart',
+    adresseArrivee: 'adresseArrivee',
+    latitudeArrivee: 'latitudeArrivee',
+    longitudeArrivee: 'longitudeArrivee',
     distance: 'distance',
+    dureeEstimee: 'dureeEstimee',
     prixInitial: 'prixInitial',
+    prixNegocie: 'prixNegocie',
     prixFinal: 'prixFinal',
     typeCourse: 'typeCourse',
     statut: 'statut',
@@ -235,6 +244,16 @@ exports.DemandePartageCourseScalarFieldEnum = {
     prixCalcule: 'prixCalcule',
     statut: 'statut',
     dateCreation: 'dateCreation'
+};
+exports.ValidationPartageCourseScalarFieldEnum = {
+    id: 'id',
+    demandePartageId: 'demandePartageId',
+    utilisateurId: 'utilisateurId',
+    typeValidateur: 'typeValidateur',
+    decision: 'decision',
+    commentaire: 'commentaire',
+    dateValidation: 'dateValidation',
+    courseId: 'courseId'
 };
 exports.ParticipantCourseScalarFieldEnum = {
     id: 'id',
