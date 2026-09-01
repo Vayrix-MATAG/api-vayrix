@@ -8,6 +8,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RoleModule } from './modules/role/role.module';
+import { MailModule } from './mail/mail.module';
+import { OtpModule } from './otp/otp.module';
+import { SmsModule } from './sms/sms.module';
 import { DriversModule } from './drivers/drivers.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { RidesModule } from './rides/rides.module';
@@ -30,6 +33,9 @@ import { RidesModule } from './rides/rides.module';
     ThrottlerModule.forRootAsync({ inject: [ConfigService], useFactory: (configService: ConfigService) => [{ ttl: configService.get<number>('throttle.ttl') ?? 60000, limit: configService.get<number>('throttle.limit') ?? 100 }] }),
     CommonModule,
     PrismaModule,
+    MailModule,
+    OtpModule,
+    SmsModule,
     AuthModule,
     UsersModule,
     RoleModule,

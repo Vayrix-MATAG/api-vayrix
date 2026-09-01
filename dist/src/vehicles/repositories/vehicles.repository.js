@@ -44,13 +44,14 @@ let VehiclesRepository = class VehiclesRepository {
     async findAll(options) {
         const { skip, take, orderBy } = (0, pagination_util_1.getPaginationParams)(options);
         const searchOr = (0, pagination_util_1.buildSearchOr)(options.search, ['marque', 'modele', 'matricule']);
+        const validOrderBy = orderBy.createdAt ? { id: 'desc' } : orderBy;
         const where = {
             ...(options.statut && { statut: options.statut }),
             ...(options.typeVehiculeId && { typeVehiculeId: BigInt(options.typeVehiculeId) }),
             ...(searchOr && { OR: searchOr }),
         };
         const [data, total] = await Promise.all([
-            this.prisma.vehicule.findMany({ where, skip, take, orderBy, include: VEHICULE_INCLUDE }),
+            this.prisma.vehicule.findMany({ where, skip, take, orderBy: validOrderBy, include: VEHICULE_INCLUDE }),
             this.prisma.vehicule.count({ where }),
         ]);
         return (0, pagination_util_1.buildPaginatedResult)(data, total, options.page, options.limit);

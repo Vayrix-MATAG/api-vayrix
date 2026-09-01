@@ -34,6 +34,10 @@ export class DriversRepository {
     const { skip, take, orderBy } = getPaginationParams(options);
     const searchOr = buildSearchOr(options.search, ['nom', 'prenom', 'email', 'telephone']);
 
+    // Utiliser 'dateCreation' comme fallback si sortBy est 'createdAt' (champ inexistant dans Chauffeur)
+    const validOrderBy: Prisma.ChauffeurOrderByWithRelationInput = 
+      (orderBy as any).createdAt ? { dateCreation: 'desc' as const } : orderBy as Prisma.ChauffeurOrderByWithRelationInput;
+
     const where: Prisma.ChauffeurWhereInput = {
       ...(options.statut && { statut: options.statut }),
       ...(typeof options.estEnLigne === 'boolean' && { estEnLigne: options.estEnLigne }),
@@ -41,7 +45,7 @@ export class DriversRepository {
     };
 
     const [data, total] = await Promise.all([
-      this.prisma.chauffeur.findMany({ where, skip, take, orderBy, include: CHAUFFEUR_INCLUDE }),
+      this.prisma.chauffeur.findMany({ where, skip, take, orderBy: validOrderBy, include: CHAUFFEUR_INCLUDE }),
       this.prisma.chauffeur.count({ where }),
     ]);
 

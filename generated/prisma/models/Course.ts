@@ -323,12 +323,12 @@ export type CourseGroupByOutputType = {
   id: bigint
   chauffeurId: bigint | null
   vehiculeId: bigint | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart: string | null
+  latitudeDepart: number | null
+  longitudeDepart: number | null
+  adresseArrivee: string | null
+  latitudeArrivee: number | null
+  longitudeArrivee: number | null
   distance: runtime.Decimal | null
   dureeEstimee: runtime.Decimal | null
   prixInitial: runtime.Decimal | null
@@ -370,12 +370,12 @@ export type CourseWhereInput = {
   id?: Prisma.BigIntFilter<"Course"> | bigint | number
   chauffeurId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
   vehiculeId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
-  adresseDepart?: Prisma.StringFilter<"Course"> | string
-  latitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  longitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  adresseArrivee?: Prisma.StringFilter<"Course"> | string
-  latitudeArrivee?: Prisma.FloatFilter<"Course"> | number
-  longitudeArrivee?: Prisma.FloatFilter<"Course"> | number
+  adresseDepart?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  adresseArrivee?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
   distance?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -406,12 +406,12 @@ export type CourseOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   chauffeurId?: Prisma.SortOrderInput | Prisma.SortOrder
   vehiculeId?: Prisma.SortOrderInput | Prisma.SortOrder
-  adresseDepart?: Prisma.SortOrder
-  latitudeDepart?: Prisma.SortOrder
-  longitudeDepart?: Prisma.SortOrder
-  adresseArrivee?: Prisma.SortOrder
-  latitudeArrivee?: Prisma.SortOrder
-  longitudeArrivee?: Prisma.SortOrder
+  adresseDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitudeDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitudeDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  adresseArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitudeArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitudeArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
   distance?: Prisma.SortOrderInput | Prisma.SortOrder
   dureeEstimee?: Prisma.SortOrderInput | Prisma.SortOrder
   prixInitial?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -445,12 +445,12 @@ export type CourseWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CourseWhereInput | Prisma.CourseWhereInput[]
   chauffeurId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
   vehiculeId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
-  adresseDepart?: Prisma.StringFilter<"Course"> | string
-  latitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  longitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  adresseArrivee?: Prisma.StringFilter<"Course"> | string
-  latitudeArrivee?: Prisma.FloatFilter<"Course"> | number
-  longitudeArrivee?: Prisma.FloatFilter<"Course"> | number
+  adresseDepart?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  adresseArrivee?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
   distance?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -481,12 +481,12 @@ export type CourseOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   chauffeurId?: Prisma.SortOrderInput | Prisma.SortOrder
   vehiculeId?: Prisma.SortOrderInput | Prisma.SortOrder
-  adresseDepart?: Prisma.SortOrder
-  latitudeDepart?: Prisma.SortOrder
-  longitudeDepart?: Prisma.SortOrder
-  adresseArrivee?: Prisma.SortOrder
-  latitudeArrivee?: Prisma.SortOrder
-  longitudeArrivee?: Prisma.SortOrder
+  adresseDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitudeDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitudeDepart?: Prisma.SortOrderInput | Prisma.SortOrder
+  adresseArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
+  latitudeArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
+  longitudeArrivee?: Prisma.SortOrderInput | Prisma.SortOrder
   distance?: Prisma.SortOrderInput | Prisma.SortOrder
   dureeEstimee?: Prisma.SortOrderInput | Prisma.SortOrder
   prixInitial?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -513,12 +513,12 @@ export type CourseScalarWhereWithAggregatesInput = {
   id?: Prisma.BigIntWithAggregatesFilter<"Course"> | bigint | number
   chauffeurId?: Prisma.BigIntNullableWithAggregatesFilter<"Course"> | bigint | number | null
   vehiculeId?: Prisma.BigIntNullableWithAggregatesFilter<"Course"> | bigint | number | null
-  adresseDepart?: Prisma.StringWithAggregatesFilter<"Course"> | string
-  latitudeDepart?: Prisma.FloatWithAggregatesFilter<"Course"> | number
-  longitudeDepart?: Prisma.FloatWithAggregatesFilter<"Course"> | number
-  adresseArrivee?: Prisma.StringWithAggregatesFilter<"Course"> | string
-  latitudeArrivee?: Prisma.FloatWithAggregatesFilter<"Course"> | number
-  longitudeArrivee?: Prisma.FloatWithAggregatesFilter<"Course"> | number
+  adresseDepart?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
+  latitudeDepart?: Prisma.FloatNullableWithAggregatesFilter<"Course"> | number | null
+  longitudeDepart?: Prisma.FloatNullableWithAggregatesFilter<"Course"> | number | null
+  adresseArrivee?: Prisma.StringNullableWithAggregatesFilter<"Course"> | string | null
+  latitudeArrivee?: Prisma.FloatNullableWithAggregatesFilter<"Course"> | number | null
+  longitudeArrivee?: Prisma.FloatNullableWithAggregatesFilter<"Course"> | number | null
   distance?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.DecimalNullableWithAggregatesFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -535,12 +535,12 @@ export type CourseScalarWhereWithAggregatesInput = {
 
 export type CourseCreateInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -571,12 +571,12 @@ export type CourseUncheckedCreateInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -603,12 +603,12 @@ export type CourseUncheckedCreateInput = {
 
 export type CourseUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -639,12 +639,12 @@ export type CourseUncheckedUpdateInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -673,12 +673,12 @@ export type CourseCreateManyInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -695,12 +695,12 @@ export type CourseCreateManyInput = {
 
 export type CourseUpdateManyMutationInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -719,12 +719,12 @@ export type CourseUncheckedUpdateManyInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -945,6 +945,14 @@ export type CourseUncheckedUpdateManyWithoutVehiculeNestedInput = {
   deleteMany?: Prisma.CourseScalarWhereInput | Prisma.CourseScalarWhereInput[]
 }
 
+export type NullableFloatFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type NullableDecimalFieldUpdateOperationsInput = {
   set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1105,12 +1113,12 @@ export type CourseUpdateOneRequiredWithoutEvaluationsClientNestedInput = {
 
 export type CourseCreateWithoutChauffeurInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1139,12 +1147,12 @@ export type CourseCreateWithoutChauffeurInput = {
 export type CourseUncheckedCreateWithoutChauffeurInput = {
   id?: bigint | number
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1202,12 +1210,12 @@ export type CourseScalarWhereInput = {
   id?: Prisma.BigIntFilter<"Course"> | bigint | number
   chauffeurId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
   vehiculeId?: Prisma.BigIntNullableFilter<"Course"> | bigint | number | null
-  adresseDepart?: Prisma.StringFilter<"Course"> | string
-  latitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  longitudeDepart?: Prisma.FloatFilter<"Course"> | number
-  adresseArrivee?: Prisma.StringFilter<"Course"> | string
-  latitudeArrivee?: Prisma.FloatFilter<"Course"> | number
-  longitudeArrivee?: Prisma.FloatFilter<"Course"> | number
+  adresseDepart?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeDepart?: Prisma.FloatNullableFilter<"Course"> | number | null
+  adresseArrivee?: Prisma.StringNullableFilter<"Course"> | string | null
+  latitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
+  longitudeArrivee?: Prisma.FloatNullableFilter<"Course"> | number | null
   distance?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.DecimalNullableFilter<"Course"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1224,12 +1232,12 @@ export type CourseScalarWhereInput = {
 
 export type CourseCreateWithoutVehiculeInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1258,12 +1266,12 @@ export type CourseCreateWithoutVehiculeInput = {
 export type CourseUncheckedCreateWithoutVehiculeInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1316,12 +1324,12 @@ export type CourseUpdateManyWithWhereWithoutVehiculeInput = {
 
 export type CourseCreateWithoutPropositionPrixInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1351,12 +1359,12 @@ export type CourseUncheckedCreateWithoutPropositionPrixInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1398,12 +1406,12 @@ export type CourseUpdateToOneWithWhereWithoutPropositionPrixInput = {
 
 export type CourseUpdateWithoutPropositionPrixInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1433,12 +1441,12 @@ export type CourseUncheckedUpdateWithoutPropositionPrixInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1464,12 +1472,12 @@ export type CourseUncheckedUpdateWithoutPropositionPrixInput = {
 
 export type CourseCreateWithoutDemandePartageCoursesInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1499,12 +1507,12 @@ export type CourseUncheckedCreateWithoutDemandePartageCoursesInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1546,12 +1554,12 @@ export type CourseUpdateToOneWithWhereWithoutDemandePartageCoursesInput = {
 
 export type CourseUpdateWithoutDemandePartageCoursesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1581,12 +1589,12 @@ export type CourseUncheckedUpdateWithoutDemandePartageCoursesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1612,12 +1620,12 @@ export type CourseUncheckedUpdateWithoutDemandePartageCoursesInput = {
 
 export type CourseCreateWithoutValidationsPartageInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1647,12 +1655,12 @@ export type CourseUncheckedCreateWithoutValidationsPartageInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1694,12 +1702,12 @@ export type CourseUpdateToOneWithWhereWithoutValidationsPartageInput = {
 
 export type CourseUpdateWithoutValidationsPartageInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1729,12 +1737,12 @@ export type CourseUncheckedUpdateWithoutValidationsPartageInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1760,12 +1768,12 @@ export type CourseUncheckedUpdateWithoutValidationsPartageInput = {
 
 export type CourseCreateWithoutParticipantCoursesInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1795,12 +1803,12 @@ export type CourseUncheckedCreateWithoutParticipantCoursesInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1842,12 +1850,12 @@ export type CourseUpdateToOneWithWhereWithoutParticipantCoursesInput = {
 
 export type CourseUpdateWithoutParticipantCoursesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1877,12 +1885,12 @@ export type CourseUncheckedUpdateWithoutParticipantCoursesInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1908,12 +1916,12 @@ export type CourseUncheckedUpdateWithoutParticipantCoursesInput = {
 
 export type CourseCreateWithoutPaiementsInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1943,12 +1951,12 @@ export type CourseUncheckedCreateWithoutPaiementsInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -1990,12 +1998,12 @@ export type CourseUpdateToOneWithWhereWithoutPaiementsInput = {
 
 export type CourseUpdateWithoutPaiementsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2025,12 +2033,12 @@ export type CourseUncheckedUpdateWithoutPaiementsInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2056,12 +2064,12 @@ export type CourseUncheckedUpdateWithoutPaiementsInput = {
 
 export type CourseCreateWithoutEnregistrementsAudioInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2091,12 +2099,12 @@ export type CourseUncheckedCreateWithoutEnregistrementsAudioInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2138,12 +2146,12 @@ export type CourseUpdateToOneWithWhereWithoutEnregistrementsAudioInput = {
 
 export type CourseUpdateWithoutEnregistrementsAudioInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2173,12 +2181,12 @@ export type CourseUncheckedUpdateWithoutEnregistrementsAudioInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2204,12 +2212,12 @@ export type CourseUncheckedUpdateWithoutEnregistrementsAudioInput = {
 
 export type CourseCreateWithoutAnalysesSecuriteInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2239,12 +2247,12 @@ export type CourseUncheckedCreateWithoutAnalysesSecuriteInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2286,12 +2294,12 @@ export type CourseUpdateToOneWithWhereWithoutAnalysesSecuriteInput = {
 
 export type CourseUpdateWithoutAnalysesSecuriteInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2321,12 +2329,12 @@ export type CourseUncheckedUpdateWithoutAnalysesSecuriteInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2352,12 +2360,12 @@ export type CourseUncheckedUpdateWithoutAnalysesSecuriteInput = {
 
 export type CourseCreateWithoutAlertesSecuriteInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2387,12 +2395,12 @@ export type CourseUncheckedCreateWithoutAlertesSecuriteInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2434,12 +2442,12 @@ export type CourseUpdateToOneWithWhereWithoutAlertesSecuriteInput = {
 
 export type CourseUpdateWithoutAlertesSecuriteInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2469,12 +2477,12 @@ export type CourseUncheckedUpdateWithoutAlertesSecuriteInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2500,12 +2508,12 @@ export type CourseUncheckedUpdateWithoutAlertesSecuriteInput = {
 
 export type CourseCreateWithoutEvaluationsChauffeurInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2535,12 +2543,12 @@ export type CourseUncheckedCreateWithoutEvaluationsChauffeurInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2582,12 +2590,12 @@ export type CourseUpdateToOneWithWhereWithoutEvaluationsChauffeurInput = {
 
 export type CourseUpdateWithoutEvaluationsChauffeurInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2617,12 +2625,12 @@ export type CourseUncheckedUpdateWithoutEvaluationsChauffeurInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2648,12 +2656,12 @@ export type CourseUncheckedUpdateWithoutEvaluationsChauffeurInput = {
 
 export type CourseCreateWithoutEvaluationsClientInput = {
   id?: bigint | number
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2683,12 +2691,12 @@ export type CourseUncheckedCreateWithoutEvaluationsClientInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2730,12 +2738,12 @@ export type CourseUpdateToOneWithWhereWithoutEvaluationsClientInput = {
 
 export type CourseUpdateWithoutEvaluationsClientInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2765,12 +2773,12 @@ export type CourseUncheckedUpdateWithoutEvaluationsClientInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2797,12 +2805,12 @@ export type CourseUncheckedUpdateWithoutEvaluationsClientInput = {
 export type CourseCreateManyChauffeurInput = {
   id?: bigint | number
   vehiculeId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2819,12 +2827,12 @@ export type CourseCreateManyChauffeurInput = {
 
 export type CourseUpdateWithoutChauffeurInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2853,12 +2861,12 @@ export type CourseUpdateWithoutChauffeurInput = {
 export type CourseUncheckedUpdateWithoutChauffeurInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2886,12 +2894,12 @@ export type CourseUncheckedUpdateWithoutChauffeurInput = {
 export type CourseUncheckedUpdateManyWithoutChauffeurInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   vehiculeId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2909,12 +2917,12 @@ export type CourseUncheckedUpdateManyWithoutChauffeurInput = {
 export type CourseCreateManyVehiculeInput = {
   id?: bigint | number
   chauffeurId?: bigint | number | null
-  adresseDepart: string
-  latitudeDepart: number
-  longitudeDepart: number
-  adresseArrivee: string
-  latitudeArrivee: number
-  longitudeArrivee: number
+  adresseDepart?: string | null
+  latitudeDepart?: number | null
+  longitudeDepart?: number | null
+  adresseArrivee?: string | null
+  latitudeArrivee?: number | null
+  longitudeArrivee?: number | null
   distance?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2931,12 +2939,12 @@ export type CourseCreateManyVehiculeInput = {
 
 export type CourseUpdateWithoutVehiculeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2965,12 +2973,12 @@ export type CourseUpdateWithoutVehiculeInput = {
 export type CourseUncheckedUpdateWithoutVehiculeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -2998,12 +3006,12 @@ export type CourseUncheckedUpdateWithoutVehiculeInput = {
 export type CourseUncheckedUpdateManyWithoutVehiculeInput = {
   id?: Prisma.BigIntFieldUpdateOperationsInput | bigint | number
   chauffeurId?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  adresseDepart?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeDepart?: Prisma.FloatFieldUpdateOperationsInput | number
-  adresseArrivee?: Prisma.StringFieldUpdateOperationsInput | string
-  latitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
-  longitudeArrivee?: Prisma.FloatFieldUpdateOperationsInput | number
+  adresseDepart?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeDepart?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  adresseArrivee?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitudeArrivee?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   distance?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   dureeEstimee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   prixInitial?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
@@ -3288,12 +3296,12 @@ export type $CoursePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     id: bigint
     chauffeurId: bigint | null
     vehiculeId: bigint | null
-    adresseDepart: string
-    latitudeDepart: number
-    longitudeDepart: number
-    adresseArrivee: string
-    latitudeArrivee: number
-    longitudeArrivee: number
+    adresseDepart: string | null
+    latitudeDepart: number | null
+    longitudeDepart: number | null
+    adresseArrivee: string | null
+    latitudeArrivee: number | null
+    longitudeArrivee: number | null
     distance: runtime.Decimal | null
     dureeEstimee: runtime.Decimal | null
     prixInitial: runtime.Decimal | null

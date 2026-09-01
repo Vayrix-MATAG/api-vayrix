@@ -38,13 +38,14 @@ let DriversRepository = class DriversRepository {
     async findAll(options) {
         const { skip, take, orderBy } = (0, pagination_util_1.getPaginationParams)(options);
         const searchOr = (0, pagination_util_1.buildSearchOr)(options.search, ['nom', 'prenom', 'email', 'telephone']);
+        const validOrderBy = orderBy.createdAt ? { dateCreation: 'desc' } : orderBy;
         const where = {
             ...(options.statut && { statut: options.statut }),
             ...(typeof options.estEnLigne === 'boolean' && { estEnLigne: options.estEnLigne }),
             ...(searchOr && { utilisateur: { OR: searchOr } }),
         };
         const [data, total] = await Promise.all([
-            this.prisma.chauffeur.findMany({ where, skip, take, orderBy, include: CHAUFFEUR_INCLUDE }),
+            this.prisma.chauffeur.findMany({ where, skip, take, orderBy: validOrderBy, include: CHAUFFEUR_INCLUDE }),
             this.prisma.chauffeur.count({ where }),
         ]);
         return (0, pagination_util_1.buildPaginatedResult)(data, total, options.page, options.limit);

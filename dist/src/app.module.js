@@ -20,6 +20,9 @@ const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
 const role_module_1 = require("./modules/role/role.module");
+const mail_module_1 = require("./mail/mail.module");
+const otp_module_1 = require("./otp/otp.module");
+const sms_module_1 = require("./sms/sms.module");
 const drivers_module_1 = require("./drivers/drivers.module");
 const vehicles_module_1 = require("./vehicles/vehicles.module");
 const rides_module_1 = require("./rides/rides.module");
@@ -37,6 +40,9 @@ exports.AppModule = AppModule = __decorate([
             throttler_1.ThrottlerModule.forRootAsync({ inject: [config_1.ConfigService], useFactory: (configService) => [{ ttl: configService.get('throttle.ttl') ?? 60000, limit: configService.get('throttle.limit') ?? 100 }] }),
             common_module_1.CommonModule,
             prisma_module_1.PrismaModule,
+            mail_module_1.MailModule,
+            otp_module_1.OtpModule,
+            sms_module_1.SmsModule,
             auth_module_1.AuthModule,
             users_module_1.UsersModule,
             role_module_1.RoleModule,

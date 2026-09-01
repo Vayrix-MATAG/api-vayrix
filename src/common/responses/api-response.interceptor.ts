@@ -13,6 +13,33 @@ interface ResponsePayload<T = unknown> {
   meta?: unknown;
 }
 
+/** Convertit les BigInt en string pour la sérialisation JSON */
+function stringifyBigInt(obj: unknown): unknown {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (typeof obj === 'bigint') {
+    return obj.toString();
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(stringifyBigInt);
+  }
+  
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        result[key] = stringifyBigInt((obj as Record<string, unknown>)[key]);
+      }
+    }
+    return result;
+  }
+  
+  return obj;
+}
+
 @Injectable()
 export class ApiResponseInterceptor<T>
   implements NestInterceptor<T, unknown>
@@ -30,7 +57,7 @@ export class ApiResponseInterceptor<T>
           typeof payload === 'object' &&
           'success' in (payload as object)
         ) {
-          return payload;
+          return stringifyBigInt(payload);
         }
 
         const responsePayload = payload as ResponsePayload<T>;
@@ -42,14 +69,15 @@ export class ApiResponseInterceptor<T>
             'meta' in responsePayload);
 
         if (hasEnvelopeShape) {
-          return this.apiResponseService.success(
+          const result = this.apiResponseService.success(
             (responsePayload.data as T) ?? (payload as T),
             responsePayload.message ?? 'Succès',
             responsePayload.meta ?? null,
           );
+          return stringifyBigInt(result);
         }
 
-        return this.apiResponseService.success(payload as T);
+        return stringifyBigInt(this.apiResponseService.success(payload as T));
       }),
     );
   }

@@ -42,6 +42,12 @@ export class VehiclesRepository {
     const { skip, take, orderBy } = getPaginationParams(options);
     const searchOr = buildSearchOr(options.search, ['marque', 'modele', 'matricule']);
 
+    // Utiliser 'id' comme fallback si sortBy est 'createdAt' (champ inexistant dans Vehicule)
+    let validOrderBy: Prisma.VehiculeOrderByWithRelationInput = orderBy as Prisma.VehiculeOrderByWithRelationInput;
+    if ((orderBy as any).createdAt) {
+      validOrderBy = { id: 'desc' as const };
+    }
+
     const where: Prisma.VehiculeWhereInput = {
       ...(options.statut && { statut: options.statut }),
       ...(options.typeVehiculeId && { typeVehiculeId: BigInt(options.typeVehiculeId) }),
@@ -49,7 +55,7 @@ export class VehiclesRepository {
     };
 
     const [data, total] = await Promise.all([
-      this.prisma.vehicule.findMany({ where, skip, take, orderBy, include: VEHICULE_INCLUDE }),
+      this.prisma.vehicule.findMany({ where, skip, take, orderBy: validOrderBy, include: VEHICULE_INCLUDE }),
       this.prisma.vehicule.count({ where }),
     ]);
 
